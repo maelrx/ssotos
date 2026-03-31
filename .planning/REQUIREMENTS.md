@@ -3,19 +3,19 @@
 ## v1 Requirements
 
 ### F1 — Knowledge Filesystem
-- [ ] **F1-01**: Canonical filesystem structure with `user-vault/`, `agent-brain/`, `exchange/`, `raw/`, `runtime/` directories
-- [ ] **F1-02**: Note schemas with YAML frontmatter (`id`, `kind`, `status`, `title`, `tags`, `links`, `source`, `policy`)
-- [ ] **F1-03**: Note types: daily, project, area, resource, archive-item, fleeting, permanent, research-note, source-note, synthesis-note, index-note, template-instance
+- [x] **F1-01**: Canonical filesystem structure with `user-vault/`, `agent-brain/`, `exchange/`, `raw/`, `runtime/` directories
+- [x] **F1-02**: Note schemas with YAML frontmatter (`id`, `kind`, `status`, `title`, `tags`, `links`, `source`, `policy`)
+- [x] **F1-03**: Note types: daily, project, area, resource, archive-item, fleeting, permanent, research-note, source-note, synthesis-note, index-note, template-instance
 
 ### F2 — Template System
-- [ ] **F2-01**: Template profiles (PARA-like, Daily-first, Zettelkasten-like, Research Lab, Project OS)
-- [ ] **F2-02**: Base templates: daily, project, area, resource, fleeting, permanent, source, synthesis, research brief
-- [ ] **F2-03**: Template profile selection at workspace creation
+- [x] **F2-01**: Template profiles (PARA-like, Daily-first, Zettelkasten-like, Research Lab, Project OS)
+- [x] **F2-02**: Base templates: daily, project, area, resource, fleeting, permanent, source, synthesis, research brief
+- [x] **F2-03**: Template profile selection at workspace creation
 
 ### F3 — Daily Notes
-- [ ] **F3-01**: Daily note creation by date
-- [ ] **F3-02**: Daily note templates with configurable sections (Inbox, Focus, Notes, Linked Projects, Decisions, Tasks, Review)
-- [ ] **F3-03**: Daily note linking to projects/areas
+- [x] **F3-01**: Daily note creation by date
+- [x] **F3-02**: Daily note templates with configurable sections (Inbox, Focus, Notes, Linked Projects, Decisions, Tasks, Review)
+- [x] **F3-03**: Daily note linking to projects/areas
 
 ### F4 — Git / Revision Boundary
 - [ ] **F4-01**: Git repositories: `user-vault.git` and `agent-brain.git`
