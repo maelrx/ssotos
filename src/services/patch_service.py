@@ -4,6 +4,8 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from core.events import emit, EventType
+
 if TYPE_CHECKING:
     from services.git_service import GitService
     from models.proposal import Proposal
@@ -104,13 +106,21 @@ class PatchService:
         provenance_path = bundle_dir / "provenance.yaml"
         provenance_path.write_text(yaml.dump(provenance), encoding="utf-8")
 
-        return PatchBundle(
+        bundle = PatchBundle(
             proposal_id=proposal_id,
             bundle_path=str(bundle_dir),
             diff=diff_info,
             created_at=datetime.utcnow(),
             self_contained=True
         )
+
+        emit(EventType.PATCH_BUNDLE_CREATED, domain=proposal_id, metadata={
+            "proposal_id": proposal_id,
+            "files_changed": diff_info.files_changed,
+            "insertions": diff_info.insertions,
+            "deletions": diff_info.deletions
+        })
+        return bundle
 
     def apply_patch_bundle(
         self,

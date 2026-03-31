@@ -4,6 +4,8 @@ import shutil
 from pathlib import Path
 from typing import Literal
 
+from core.events import emit, EventType
+
 
 class GitError(Exception):
     """Raised when a Git command fails."""
@@ -43,7 +45,9 @@ class GitService:
             cmd,
             capture_output=capture_output,
             text=True,
-            check=False
+            check=False,
+            encoding="utf-8",
+            errors="replace"
         )
 
         if check and result.returncode != 0:
@@ -68,6 +72,8 @@ class GitService:
         else:
             self.repo_path.mkdir(parents=True, exist_ok=True)
             self._git_cmd("init")
+
+        emit(EventType.GIT_REPO_INITIALIZED, domain=str(self.repo_path))
 
     def clone(self, source: Path, target: Path, bare: bool = False) -> None:
         """Clone a repository to a new location."""
@@ -150,6 +156,7 @@ class GitService:
             )
 
         self._git_cmd("branch", name, start_point)
+        emit(EventType.GIT_BRANCH_CREATED, actor=start_point, domain=name)
 
     def delete_branch(self, name: str) -> None:
         """Delete a branch (safe — won't delete main)."""
@@ -160,6 +167,7 @@ class GitService:
                 "Cannot delete protected branch: main"
             )
         self._git_cmd("branch", "-d", name)
+        emit(EventType.GIT_BRANCH_DELETED, domain=name)
 
     def branch_exists(self, name: str) -> bool:
         """Check if branch exists."""
@@ -220,6 +228,8 @@ class GitService:
                 check=True
             )
 
+        emit(EventType.GIT_WORKTREE_CREATED, domain=branch, metadata={"path": str(path)})
+
     def list_worktrees(self) -> list[dict]:
         """List all worktrees. Returns list of {path, branch, head}."""
         result = self._git_cmd("worktree", "list", "--porcelain")
@@ -249,6 +259,8 @@ class GitService:
             self._git_cmd("worktree", "remove", "--force", str(path))
         else:
             self._git_cmd("worktree", "remove", str(path))
+
+        emit(EventType.GIT_WORKTREE_REMOVED, domain=str(path))
 
     def worktree_path_for_branch(self, branch: str) -> Path | None:
         """Find the worktree path for a given branch."""
@@ -288,21 +300,33 @@ class GitService:
             args.append(ref_b)
 
         result = self._git_cmd(*args)
-        stat_line = result.stdout.strip().split("\n")[-1] if result.stdout.strip() else ""
+        stat_output = result.stdout.strip()
+        lines = stat_output.split("\n")
 
-        # Parse stat output like: "  file1.txt | 5 ++--\n  2 files changed, 3 insertions(+), 2 deletions(-)"
+        # Parse stat output - can have format like:
+        # "  file1.txt | 3 +++\n  1 file changed, 3 insertions(+)"
+        # or
+        # "  file1.txt | 5 ++--\n  2 files changed, 3 insertions(+), 2 deletions(-)"
         files_changed = 0
         insertions = 0
         deletions = 0
 
-        if "files changed" in stat_line:
-            for part in stat_line.split(","):
+        # Find the summary line (contains "file changed")
+        summary_line = ""
+        for line in lines:
+            if "file changed" in line.lower():
+                summary_line = line
+                break
+
+        if summary_line:
+            # Parse "X file(s) changed, Y insertion(s)(+), Z deletion(s)(-)"
+            for part in summary_line.split(","):
                 part = part.strip()
-                if "file" in part and "changed" in part:
+                if "file" in part.lower() and "changed" in part.lower():
                     files_changed = int(part.split()[0])
-                elif "insertion" in part:
+                elif "insertion" in part.lower():
                     insertions = int(part.split()[0])
-                elif "deletion" in part:
+                elif "deletion" in part.lower():
                     deletions = int(part.split()[0])
 
         return {
@@ -338,6 +362,8 @@ class GitService:
         else:
             result = self._git_cmd_no_check("apply", str(patch_path))
 
+        if result.returncode == 0:
+            emit(EventType.GIT_PATCH_APPLIED, domain=str(patch_path))
         return result.returncode == 0
 
     def format_patch(self, ref_a: str, ref_b: str, output_dir: Path) -> list[Path]:
@@ -379,7 +405,9 @@ class GitService:
 
         self._git_cmd(*args)
         result = self._git_cmd("rev-parse", "HEAD")
-        return result.stdout.strip()
+        sha = result.stdout.strip()
+        emit(EventType.GIT_COMMIT_CREATED, actor=author or "system", metadata={"sha": sha, "message": message})
+        return sha
 
     def log(self, max_count: int = 10, branch: str | None = None) -> list[dict]:
         """Get commit log. Returns list of {sha, message, author, date}."""
@@ -444,6 +472,8 @@ class GitService:
         args.append(branch)
 
         result = self._git_cmd_no_check(*args)
+        if result.returncode == 0:
+            emit(EventType.GIT_MERGE_COMPLETED, domain=branch)
         return result.returncode == 0
 
     def cherry_pick(self, commit: str) -> bool:
@@ -471,7 +501,9 @@ class GitService:
         """
         self._git_cmd("revert", "--no-edit", ref)
         result = self._git_cmd("rev-parse", "HEAD")
-        return result.stdout.strip()
+        sha = result.stdout.strip()
+        emit(EventType.GIT_COMMIT_CREATED, actor="revert", metadata={"reverted_ref": ref, "sha": sha})
+        return sha
 
     def reset(self, ref: str, hard: bool = False) -> None:
         """Reset HEAD to ref. If hard=True, also reset working tree.

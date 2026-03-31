@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 import yaml
 import shutil
 
+from core.events import emit, EventType
+
 if TYPE_CHECKING:
     from services.git_service import GitService
     from services.patch_service import PatchService
@@ -118,6 +120,7 @@ class ProposalService:
         # Save proposal metadata
         self._save_proposal(proposal)
 
+        emit(EventType.PROPOSAL_CREATED, actor=actor, domain=target_domain.value, metadata={"proposal_id": proposal_id})
         return proposal
 
     def generate_proposal_diff(self, proposal: "Proposal") -> "DiffInfo":
@@ -198,6 +201,7 @@ class ProposalService:
         proposal.updated_at = datetime.utcnow()
 
         self._save_proposal(proposal)
+        emit(EventType.PROPOSAL_SUBMITTED, actor=proposal.actor, domain=proposal.target_domain.value, metadata={"proposal_id": proposal.id})
         return proposal
 
     def approve_proposal(
@@ -224,6 +228,7 @@ class ProposalService:
         proposal.updated_at = datetime.utcnow()
 
         self._save_proposal(proposal)
+        emit(EventType.PROPOSAL_APPROVED, actor=reviewer, domain=proposal.target_domain.value, metadata={"proposal_id": proposal.id})
         return proposal
 
     def reject_proposal(
@@ -250,6 +255,7 @@ class ProposalService:
         proposal.updated_at = datetime.utcnow()
 
         self._save_proposal(proposal)
+        emit(EventType.PROPOSAL_REJECTED, actor=reviewer, domain=proposal.target_domain.value, metadata={"proposal_id": proposal.id, "reason": reason})
         return proposal
 
     def apply_proposal(self, proposal: "Proposal") -> "Proposal":
@@ -300,6 +306,7 @@ class ProposalService:
         proposal.updated_at = datetime.utcnow()
 
         self._save_proposal(proposal)
+        emit(EventType.PROPOSAL_APPLIED, actor="system", domain=proposal.target_domain.value, metadata={"proposal_id": proposal.id})
         return proposal
 
     def rollback_proposal(self, proposal: "Proposal") -> "Proposal":
@@ -324,6 +331,7 @@ class ProposalService:
         proposal.updated_at = datetime.utcnow()
 
         self._save_proposal(proposal)
+        emit(EventType.PROPOSAL_ROLLBACK, actor="system", domain=proposal.target_domain.value, metadata={"proposal_id": proposal.id})
         return proposal
 
     def get_proposal(self, proposal_id: str) -> "Proposal | None":
