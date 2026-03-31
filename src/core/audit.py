@@ -88,8 +88,9 @@ class AuditLogger:
             timestamp=timestamp,
         )
 
-        db.add(audit_entry)
-        await db.commit()
+        if db is not None:
+            db.add(audit_entry)
+            await db.commit()
 
         # Also emit to structlog for log-based observability
         log_data = {
