@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Sovereign canonical filesystem — the center of the system is real Markdown files, not vectors, not chat, not agent memory.
 
-**Current focus:** Phase 0 — Project initialization
+**Current focus:** Phase 1 — Knowledge Filesystem Foundation
 
 ## Current Milestone
 
@@ -18,7 +18,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 | # | Phase | Status | Plans |
 |---|-------|--------|-------|
-| 1 | Knowledge Filesystem Foundation | pending | 0 |
+| 1 | Knowledge Filesystem Foundation | context_gathered | 0 |
 | 2 | Git / Exchange Boundary | pending | 0 |
 | 3 | Policy Engine | pending | 0 |
 | 4 | Backend / API / Services / Jobs | pending | 0 |
@@ -41,6 +41,7 @@ None.
 
 - 2026-03-31: Project initialized with full documentation from docs/
 - 2026-03-31: Requirements and roadmap created
+- 2026-03-31: Phase 1 context gathered (auto-mode)
 
 ## Workflow State
 
