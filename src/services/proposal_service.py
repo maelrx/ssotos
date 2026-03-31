@@ -6,6 +6,9 @@ import yaml
 import shutil
 
 from core.events import emit, EventType
+from core.policy.service import PolicyService, PolicyDeniedException
+from core.policy.models import PolicyRequest
+from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
 
 if TYPE_CHECKING:
     from services.git_service import GitService
@@ -35,6 +38,7 @@ class ProposalService:
         self.exchange_path = exchange_path
         self.worktrees_path = worktrees_path
         self.exchange_path.mkdir(parents=True, exist_ok=True)
+        self.policy = PolicyService()
 
     def create_proposal(
         self,
@@ -58,6 +62,19 @@ class ProposalService:
         # Validate actor (reject 'main')
         if actor == "main":
             raise ValueError("Actor 'main' not allowed for proposals")
+
+        # Policy check before creating proposal
+        capability_group = self._domain_to_capability_group(target_domain)
+        policy_request = PolicyRequest(
+            actor=actor,
+            capability_group=capability_group,
+            action=CapabilityAction.CREATE,
+            domain=Domain.EXCHANGE,
+            path=target_path,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
 
         # Create branch name following D-25 convention
         branch_name = f"proposal/{actor}/{proposal_id}"
@@ -157,6 +174,18 @@ class ProposalService:
         """
         from models.proposal import ProposalState
 
+        # Policy check before submitting for review
+        policy_request = PolicyRequest(
+            actor=proposal.actor,
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         # Handle DRAFT -> GENERATED transition
         if proposal.state == ProposalState.DRAFT:
             if not proposal.can_transition_to(ProposalState.GENERATED):
@@ -216,6 +245,18 @@ class ProposalService:
         """
         from models.proposal import ProposalState
 
+        # Policy check before approving
+        policy_request = PolicyRequest(
+            actor=reviewer,
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         if not proposal.can_transition_to(ProposalState.APPROVED):
             raise InvalidStateTransition(
                 f"Cannot transition from {proposal.state} to APPROVED"
@@ -243,6 +284,18 @@ class ProposalService:
         """
         from models.proposal import ProposalState
 
+        # Policy check before rejecting
+        policy_request = PolicyRequest(
+            actor=reviewer,
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         if not proposal.can_transition_to(ProposalState.REJECTED):
             raise InvalidStateTransition(
                 f"Cannot transition from {proposal.state} to REJECTED"
@@ -266,6 +319,18 @@ class ProposalService:
         F4-06: Merge/cherry-pick works for approved proposals.
         """
         from models.proposal import ProposalState, SourceDomain
+
+        # Policy check before applying
+        policy_request = PolicyRequest(
+            actor="system",
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
 
         if not proposal.can_transition_to(ProposalState.APPLIED):
             raise InvalidStateTransition(
@@ -376,6 +441,18 @@ class ProposalService:
         """Get the base commit ref for a domain."""
         # For now, use origin/main or main
         return "origin/main" if self.git.branch_exists(f"origin/{domain.value}") else "main"
+
+    def _domain_to_capability_group(self, domain: "SourceDomain") -> CapabilityGroup:
+        """Map SourceDomain to CapabilityGroup."""
+        from models.proposal import SourceDomain
+        if domain == SourceDomain.USER_VAULT:
+            return CapabilityGroup.VAULT
+        elif domain == SourceDomain.AGENT_BRAIN:
+            return CapabilityGroup.AGENT
+        elif domain == SourceDomain.RESEARCH:
+            return CapabilityGroup.RESEARCH
+        else:
+            return CapabilityGroup.EXCHANGE
 
     def _get_main_branch(self, domain: "SourceDomain") -> str:
         """Get the main branch name for a domain."""
