@@ -54,13 +54,13 @@
 - [ ] **F8-03**: Job queue with claim, status, retries
 
 ### F9 — Agent Brain
-- [ ] **F9-01**: Agent Brain filesystem: SOUL.md, MEMORY.md, USER.md, skills/, heuristics/, reflections/, sessions/, scratchpads/, playbooks/
-- [ ] **F9-02**: Agent identity and constitution (SOUL.md)
-- [ ] **F9-03**: Persistent curated memory (MEMORY.md)
-- [ ] **F9-04**: User operational profile (USER.md)
-- [ ] **F9-05**: Skills with manifest.yaml and reusable procedures
+- [x] **F9-01**: Agent Brain filesystem: SOUL.md, MEMORY.md, USER.md, skills/, heuristics/, reflections/, sessions/, scratchpads/, playbooks/
+- [x] **F9-02**: Agent identity and constitution (SOUL.md)
+- [x] **F9-03**: Persistent curated memory (MEMORY.md)
+- [x] **F9-04**: User operational profile (USER.md)
+- [x] **F9-05**: Skills with manifest.yaml and reusable procedures
 - [ ] **F9-06**: Session summaries and traces
-- [ ] **F9-07**: Self-improve within agent domain (free) vs user vault (restricted)
+- [x] **F9-07**: Self-improve within agent domain (free) vs user vault (restricted)
 
 ### F10 — Retrieval
 - [ ] **F10-01**: PostgreSQL FTS for lexical search

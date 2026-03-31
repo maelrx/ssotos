@@ -12,7 +12,7 @@
 | 2 | Git / Exchange Boundary | Implement revision layer with Git, worktrees, diff, patch, and Exchange Zone | F4, F5 | 11 |
 | 3 | Policy Engine | 3/3 | Complete|  |
 | 4 | Backend / API / Services / Jobs | 7/7 | Complete|  |
-| 5 | Agent Brain | Implement persistent agent memory and skills system | F9 | 7 |
+| 5 | Agent Brain | 2/3 | In Progress|  |
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | 8 |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | 7 |
@@ -235,7 +235,7 @@
 - SOUL.md, MEMORY.md, USER.md accessible via `/agent/brain/*` endpoints
 
 **Plans:**
-1/3 plans executed
+2/3 plans executed
 - 05-01-PLAN.md — Wave 1: pydanticai dependency, schemas, AgentBrainService, SkillService (Infrastructure) — COMPLETE
 - 05-02-PLAN.md — Wave 2: Agent API router, PydanticAI runtime, tools, app registration (API + Runtime) — PENDING
 - 05-03-PLAN.md — Wave 3: reflect_agent handler, consolidate_memory handler, self-improve endpoint (Job Handlers) — PENDING

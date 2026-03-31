@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 05
-last_updated: "2026-03-31T20:57:14.021Z"
+last_updated: "2026-03-31T21:18:51.875Z"
 progress:
   total_phases: 10
   completed_phases: 2
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 13
 ---
 
 # State — Knowledge OS Core
@@ -179,3 +179,5 @@ Phase 05 Plan 05-01: COMPLETE
 - Deployment: Multi-stage Docker builds for small production images
 - Deployment: Non-root user in containers for security
 - Deployment: Caddy for reverse proxy with automatic HTTPS
+- [Phase 05]: Brain mutations use PolicyService.check() then JobService.enqueue() for async reflect_agent per D-71/D-82
+- [Phase 05]: JobService created as thin wrapper over direct Job record creation (no existing JobService in codebase)
