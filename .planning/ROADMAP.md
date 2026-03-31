@@ -12,7 +12,7 @@
 | 2 | Git / Exchange Boundary | Implement revision layer with Git, worktrees, diff, patch, and Exchange Zone | F4, F5 | 11 |
 | 3 | Policy Engine | 3/3 | Complete|  |
 | 4 | Backend / API / Services / Jobs | 7/7 | Complete|  |
-| 5 | Agent Brain | 2/3 | In Progress|  |
+| 5 | Agent Brain | 3/3 | Complete|  |
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | 8 |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | 7 |
@@ -235,10 +235,10 @@
 - SOUL.md, MEMORY.md, USER.md accessible via `/agent/brain/*` endpoints
 
 **Plans:**
-2/3 plans executed
+3/3 plans executed
 - 05-01-PLAN.md — Wave 1: pydanticai dependency, schemas, AgentBrainService, SkillService (Infrastructure) — COMPLETE
-- 05-02-PLAN.md — Wave 2: Agent API router, PydanticAI runtime, tools, app registration (API + Runtime) — PENDING
-- 05-03-PLAN.md — Wave 3: reflect_agent handler, consolidate_memory handler, self-improve endpoint (Job Handlers) — PENDING
+- 05-02-PLAN.md — Wave 2: Agent API router, PydanticAI runtime, tools, app registration (API + Runtime) — COMPLETE
+- 05-03-PLAN.md — Wave 3: reflect_agent handler, consolidate_memory handler, self-improve endpoint (Job Handlers) — COMPLETE
 
 **Plan 05-01 Execution:**
 - Status: COMPLETE (2026-03-31)
@@ -246,6 +246,20 @@
 - Summary: 05-01-SUMMARY.md
 - Completed: 4/4 tasks
 - Key files: pyproject.toml, src/schemas/agent.py, src/services/agent_brain_service.py, src/services/skill_service.py
+
+**Plan 05-02 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: 7a1c404, d4c7e89, 5ab1132, 2e3822a
+- Summary: 05-02-SUMMARY.md
+- Completed: 4/4 tasks
+- Key files: src/api/agent.py, src/agent/runtime.py, src/agent/tools.py, src/agent/__init__.py, src/services/job_service.py
+
+**Plan 05-03 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: 72cfc33, a3b29ba, 8b7317c
+- Summary: 05-03-SUMMARY.md
+- Completed: 3/3 tasks
+- Key files: src/worker/handlers/reflect_agent.py, src/worker/handlers/consolidate_memory.py, src/api/agent.py
 
 ---
 

@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 05
-last_updated: "2026-03-31T21:18:51.875Z"
+last_updated: "2026-03-31T21:28:00Z"
 progress:
   total_phases: 10
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 12
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # State — Knowledge OS Core
@@ -19,7 +19,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Sovereign canonical filesystem — the center of the system is real Markdown files, not vectors, not chat, not agent memory.
 
-**Current focus:** Phase 05 — agent-brain
+**Current focus:** Phase 06 — Retrieval (pending)
 
 ## Current Milestone
 
@@ -35,7 +35,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 2 | Git / Exchange Boundary | complete | 1 |
 | 3 | Policy Engine | complete | 3 |
 | 4 | Backend / API / Services / Jobs | complete | 6 |
-| 5 | Agent Brain | in_progress | 1 |
+| 5 | Agent Brain | complete | 3 |
 | 6 | Retrieval | pending | 0 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
@@ -158,6 +158,15 @@ Phase 05 Plan 05-01: COMPLETE
 - SkillService with manifest loading and invocation
 - Ready for Phase 05-02 (Agent API router)
 
+Phase 05 Plan 05-03: COMPLETE (Wave 3)
+
+- 3/3 tasks executed
+- SUMMARY.md created at .planning/phases/05-agent-brain/05-03-SUMMARY.md
+- reflect_agent handler with brain_mutations processing, session summary generation, heuristic-to-skill conversion
+- consolidate_memory handler with MEMORY_CURATION_CRITERIA (recurrence=3, temporal_stability=0.7, max_per_category=10)
+- self-improve endpoint POST /agent/self-improve with policy check and job enqueue
+- All Phase 5 plans complete - ready for Phase 6 (Retrieval)
+
 ## Workflow State
 
 **Mode:** YOLO (auto-approve)
@@ -181,3 +190,5 @@ Phase 05 Plan 05-01: COMPLETE
 - Deployment: Caddy for reverse proxy with automatic HTTPS
 - [Phase 05]: Brain mutations use PolicyService.check() then JobService.enqueue() for async reflect_agent per D-71/D-82
 - [Phase 05]: JobService created as thin wrapper over direct Job record creation (no existing JobService in codebase)
+- [Phase 05]: Heuristic-to-skill conversion threshold set to 3+ occurrences per D-69
+- [Phase 05]: consolidate_memory uses last 10 sessions for temporal stability calculation per D-77
