@@ -34,6 +34,9 @@ dependencies = [
 
     # Git integration
     "python-git>=1.0.0",
+
+    # Agent runtime
+    "pydanticai>=0.0.0",
 ]
 
 [project.optional-dependencies]
