@@ -148,12 +148,22 @@ class ProposalService:
         return wt_patch.generate_diff(base_ref, head_ref)
 
     def submit_for_review(self, proposal: "Proposal") -> "Proposal":
-        """Transition: GENERATED -> AWAITING_REVIEW.
+        """Transition: DRAFT -> GENERATED -> AWAITING_REVIEW.
 
         Generates patch bundle and marks proposal ready for human review.
         """
         from models.proposal import ProposalState
 
+        # Handle DRAFT -> GENERATED transition
+        if proposal.state == ProposalState.DRAFT:
+            if not proposal.can_transition_to(ProposalState.GENERATED):
+                raise InvalidStateTransition(
+                    f"Cannot transition from {proposal.state} to GENERATED"
+                )
+            proposal.state = ProposalState.GENERATED
+            self._save_proposal(proposal)
+
+        # Now handle GENERATED -> AWAITING_REVIEW
         if not proposal.can_transition_to(ProposalState.AWAITING_REVIEW):
             raise InvalidStateTransition(
                 f"Cannot transition from {proposal.state} to AWAITING_REVIEW"
@@ -162,6 +172,7 @@ class ProposalService:
         # Use the worktree's git and patch services
         worktree_path = Path(proposal.worktree_path)
         wt_git = self.git.__class__(worktree_path)
+        from services.patch_service import PatchService
         wt_patch = PatchService(wt_git)
 
         # Get the commit range for the proposal changes
