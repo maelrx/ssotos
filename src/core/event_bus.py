@@ -29,6 +29,10 @@ class EventType(Enum):
     PATCH_BUNDLE_CREATED = "exchange.patch.created"
     REVIEW_BUNDLE_CREATED = "exchange.review.created"
 
+    # Policy events
+    POLICY_EVALUATED = "policy.evaluated"
+    POLICY_DENIED = "policy.denied"
+
 
 @dataclass
 class Event:
