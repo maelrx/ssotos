@@ -19,13 +19,13 @@ O produto resolve um problema estrutural: ferramentas atuais misturam camadas qu
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Sistema de arquivos canônico com estrutura de vault (user-vault/, agent-brain/, exchange/, raw/) — Phase 1
+- ✓ Schemas e templates-base (daily, project, area, resource, fleeting, permanent, source, synthesis) — Phase 1
+- ✓ Daily notes com templates selecionáveis — Phase 1
 
 ### Active
 
-- [ ] Sistema de arquivos canônico com estrutura de vault (user-vault/, agent-brain/, exchange/, raw/)
-- [ ] Schemas e templates-base (daily, project, area, resource, fleeting, permanent, source, synthesis)
-- [ ] Daily notes com templates selecionáveis
+- [ ] Git como ledger editorial (branches, worktrees, diff, patch, merge)
 - [ ] Git como ledger editorial (branches, worktrees, diff, patch, merge)
 - [ ] Exchange Zone com proposals, reviews e patch pipeline
 - [ ] Policy Engine mínimo com capability model (vault.*, agent.*, research.*, exchange.*)
@@ -111,4 +111,4 @@ A ordem não é negociável — cada fase constrói sobre a anterior.
 
 ---
 
-*Last updated: 2026-03-31 after initialization*
+*Last updated: 2026-03-31 after Phase 1*
