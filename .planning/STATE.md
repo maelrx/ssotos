@@ -6,9 +6,9 @@ status: Executing Phase 04
 last_updated: "2026-03-31T19:46:22.019Z"
 progress:
   total_phases: 10
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # State — Knowledge OS Core
@@ -19,7 +19,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Sovereign canonical filesystem — the center of the system is real Markdown files, not vectors, not chat, not agent memory.
 
-**Current focus:** Phase 04 — backend-api-services-jobs
+**Current focus:** Phase 05 — agent-brain
 
 ## Current Milestone
 
@@ -34,8 +34,8 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 1 | Knowledge Filesystem Foundation | complete | 1 |
 | 2 | Git / Exchange Boundary | complete | 1 |
 | 3 | Policy Engine | complete | 3 |
-| 4 | Backend / API / Services / Jobs | in_progress | 6 |
-| 5 | Agent Brain | pending | 0 |
+| 4 | Backend / API / Services / Jobs | complete | 6 |
+| 5 | Agent Brain | in_progress | 0 |
 | 6 | Retrieval | pending | 0 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
@@ -136,6 +136,18 @@ Phase 04 Plan 04-05: COMPLETE
 - Research workspace with job status view
 - Ready for Phase 04-06 (Docker Compose + deployment)
 
+Phase 04 Plan 04-06: COMPLETE
+
+- 4/4 tasks executed (1 commit - all deployment files)
+- SUMMARY.md created at .planning/phases/04-backend-api-services-jobs/04-06-SUMMARY.md
+- Multi-stage Dockerfile.api and Dockerfile.worker with uv, healthchecks, non-root user
+- docker-compose.yml with postgres, api, worker, caddy services
+- Caddyfile with localhost dev and production HTTPS configs
+- .env.example documenting all environment variables
+- DEPLOYMENT.md with step-by-step self-hosted deployment instructions
+- pyproject.toml and uv.lock created (missing prerequisite for Docker builds)
+- All Phase 4 plans complete - ready for Phase 5 (Agent Brain)
+
 ## Workflow State
 
 **Mode:** YOLO (auto-approve)
@@ -147,10 +159,14 @@ Phase 04 Plan 04-05: COMPLETE
 
 ---
 
-*Last updated: 2026-03-31 after Phase 04-05 complete*
+*Last updated: 2026-03-31 after Phase 04-06 complete*
 
 ## Decisions
 
 - Frontend: Used React Query v5 with proper typing
 - Frontend: Split useNotes into useNotes (list) and useNote (single) for type safety
 - Frontend: Defined Proposal type for exchange API type safety
+- Deployment: Multi-stage Docker builds for small production images
+- Deployment: Non-root user in containers for security
+- Deployment: Caddy for reverse proxy with automatic HTTPS
+
