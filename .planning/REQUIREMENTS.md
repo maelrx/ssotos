@@ -46,7 +46,7 @@
 - [ ] **F7-03**: WebSocket/SSE for job status updates
 - [ ] **F7-04**: Postgres operational database with full schema
 - [ ] **F7-05**: Background worker for async jobs
-- [ ] **F7-06**: Audit logging for all sensitive operations
+- [x] **F7-06**: Audit logging for all sensitive operations
 
 ### F8 — Database Schema
 - [ ] **F8-01**: Tables: workspaces, actors, notes_projection, policy_rules, approvals, proposals, jobs, job_events, chunks, embeddings, artifacts, audit_logs
@@ -96,11 +96,11 @@
 - [ ] **F13-04**: Retries for idempotent steps
 
 ### F14 — Observability & Audit
-- [ ] **F14-01**: Structured audit logs with event_id, trace_id, actor, capability, domain, target, result, timestamp
-- [ ] **F14-02**: Job event timeline
-- [ ] **F14-03**: Tool call logging
-- [ ] **F14-04**: File read/write tracking
-- [ ] **F14-05**: Proposal lifecycle logging
+- [x] **F14-01**: Structured audit logs with event_id, trace_id, actor, capability, domain, target, result, timestamp
+- [x] **F14-02**: Job event timeline
+- [x] **F14-03**: Tool call logging
+- [x] **F14-04**: File read/write tracking
+- [x] **F14-05**: Proposal lifecycle logging
 
 ### F15 — Frontend / UI
 - [ ] **F15-01**: React + Vite SPA with TypeScript

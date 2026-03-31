@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+cover/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.DS_Store
+
+# Node lock files (local dev only - commit frontend/package.json not lock)
+# package-lock.json
+# yarn.lock
+
+# TypeScript build info
+frontend/tsconfig.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
+frontend/vite.config.d.ts
+frontend/vite.config.js
+
+# uv / Python lock files (local only)
+uv.lock
+
+# Alembic (local only)
+alembic.ini
+
+# GSD workflow
+.claude/sessions/
+.claude/worktrees/
+
+# Workspace embedded repos - ignore internal git objects, keep bare repos
+workspace/user-vault/objects/
+workspace/user-vault/logs/
+workspace/user-vault/refs/
+workspace/user-vault/COMMIT_EDITMSG
+workspace/user-vault/index
+workspace/agent-brain/objects/
+workspace/agent-brain/logs/
+workspace/agent-brain/refs/
+workspace/agent-brain/COMMIT_EDITMSG
+workspace/agent-brain/index
+
+# Exchange runtime worktrees (ephemeral)
+workspace/runtime/worktrees/
+workspace/exchange/patches/
+workspace/exchange/proposals/*.yaml
+
+# System git repo (embedded, for notes versioning)
+_system/
