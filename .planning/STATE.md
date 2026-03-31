@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 04
-last_updated: "2026-03-31T19:34:18.000Z"
+last_updated: "2026-03-31T19:46:22.019Z"
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 9
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # State — Knowledge OS Core
@@ -34,7 +34,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 1 | Knowledge Filesystem Foundation | complete | 1 |
 | 2 | Git / Exchange Boundary | complete | 1 |
 | 3 | Policy Engine | complete | 3 |
-| 4 | Backend / API / Services / Jobs | in_progress | 4 |
+| 4 | Backend / API / Services / Jobs | in_progress | 6 |
 | 5 | Agent Brain | pending | 0 |
 | 6 | Retrieval | pending | 0 |
 | 7 | Note Copilot | pending | 0 |
@@ -124,6 +124,18 @@ Phase 04 Plan 04-04: COMPLETE
 - OTel FastAPIInstrumentor for automatic HTTP request spans
 - create_span() integrated into JobProcessor for job processing traces
 
+Phase 04 Plan 04-05: COMPLETE
+
+- 5/5 tasks executed
+- SUMMARY.md created at .planning/phases/04-backend-api-services-jobs/04-05-SUMMARY.md
+- React + Vite + TypeScript SPA with workspace shell
+- CodeMirror 6 note editor with markdown highlighting
+- TanStack Query hooks for vault, jobs, exchange APIs
+- Zustand UI state management
+- Exchange workspace with proposal review UI
+- Research workspace with job status view
+- Ready for Phase 04-06 (Docker Compose + deployment)
+
 ## Workflow State
 
 **Mode:** YOLO (auto-approve)
@@ -135,4 +147,10 @@ Phase 04 Plan 04-04: COMPLETE
 
 ---
 
-*Last updated: 2026-03-31 after Phase 04-04 complete*
+*Last updated: 2026-03-31 after Phase 04-05 complete*
+
+## Decisions
+
+- Frontend: Used React Query v5 with proper typing
+- Frontend: Split useNotes into useNotes (list) and useNote (single) for type safety
+- Frontend: Defined Proposal type for exchange API type safety
