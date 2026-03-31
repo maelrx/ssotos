@@ -8,7 +8,7 @@ progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 12
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # State — Knowledge OS Core
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 3 | Policy Engine | complete | 3 |
 | 4 | Backend / API / Services / Jobs | complete | 6 |
 | 5 | Agent Brain | complete | 3 |
-| 6 | Retrieval | in_progress | 1 |
+| 6 | Retrieval | in_progress | 2 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
 | 9 | Durability / HITL | pending | 0 |
@@ -177,6 +177,16 @@ Phase 06 Plan 06-01: COMPLETE
 - RetrievalService with FTS, vector, RRF hybrid search, context pack builder
 - Pydantic schemas for search and context packs
 - Ready for Phase 06-02 (ChunkingService, EmbeddingService, HybridSearch integration)
+
+Phase 06 Plan 06-02: COMPLETE (Wave 2)
+
+- 3/3 tasks executed
+- SUMMARY.md created at .planning/phases/06-retrieval/06-02-SUMMARY.md
+- ChunkingService with heading-guided splitting (H1/H2/H3), 512 token max, 50 token overlap
+- EmbeddingService with batch generation (batch=100, concurrent=5), OpenAI text-embedding-3-small
+- RetrievalService augmented with search(), get_fts_results(), get_vector_results(), build_score_breakdown(), generate_why_matched()
+- tiktoken dependency added
+- Ready for Phase 06-03 (API endpoints, job handlers)
 
 Phase 06 Plans: PLANNING COMPLETE (3 waves)
 

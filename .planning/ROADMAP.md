@@ -286,9 +286,9 @@
 - Index management (incremental + rebuild)
 
 **Plans:**
-1/3 plans executed
+2/3 plans executed
 - 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas — COMPLETE
-- 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration — PENDING
+- 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration — COMPLETE
 - 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope) — PENDING
 
 **Plan 06-01 Execution:**
@@ -297,6 +297,13 @@
 - Summary: 06-01-SUMMARY.md
 - Completed: 4/4 tasks
 - Key files: alembic/versions/002_add_fts_and_pgvector.py, src/db/models/embedding.py, src/schemas/retrieval.py, src/services/retrieval_service.py
+
+**Plan 06-02 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: d104586, ce4db7f, a47fdaa
+- Summary: 06-02-SUMMARY.md
+- Completed: 3/3 tasks
+- Key files: src/services/chunking_service.py, src/services/embedding_service.py, src/services/retrieval_service.py
 
 ---
 
