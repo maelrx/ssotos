@@ -37,6 +37,10 @@ dependencies = [
 
     # Agent runtime
     "pydanticai>=0.0.0",
+
+    # Retrieval
+    "pgvector>=0.3.0",
+    "httpx>=0.28.0",
 ]
 
 [project.optional-dependencies]
