@@ -58,8 +58,12 @@ uv.lock
 alembic.ini
 
 # GSD workflow
+.claude/
 .claude/sessions/
 .claude/worktrees/
+
+# Alembic generated
+alembic/README
 
 # Workspace embedded repos - ignore internal git objects, keep bare repos
 workspace/user-vault/objects/
@@ -77,6 +81,11 @@ workspace/agent-brain/index
 workspace/runtime/worktrees/
 workspace/exchange/patches/
 workspace/exchange/proposals/*.yaml
+
+# Workspace temp files
+workspace/user-vault/test-patch.md
+workspace/user-vault/workspace/
+workspace/user-vault/worktrees/
 
 # System git repo (embedded, for notes versioning)
 _system/
