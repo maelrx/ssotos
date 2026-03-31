@@ -34,11 +34,11 @@
 - [ ] **F5-05**: Patch pipeline: create → review → approve/reject → apply
 
 ### F6 — Policy Engine
-- [ ] **F6-01**: Capability model for vault.*, agent.*, research.*, exchange.*
-- [ ] **F6-02**: Policy outcomes: allow_direct, allow_patch_only, allow_in_exchange_only, allow_with_approval, deny
-- [ ] **F6-03**: Policy rules by actor, domain, capability, path, note_type, sensitivity
-- [ ] **F6-04**: Policy checks before all sensitive mutations
-- [ ] **F6-05**: Safe defaults: read broad, create in safe zones, edit patch-first, delete/move/rename gated
+- [x] **F6-01**: Capability model for vault.*, agent.*, research.*, exchange.*
+- [x] **F6-02**: Policy outcomes: allow_direct, allow_patch_only, allow_in_exchange_only, allow_with_approval, deny
+- [x] **F6-03**: Policy rules by actor, domain, capability, path, note_type, sensitivity
+- [x] **F6-04**: Policy checks before all sensitive mutations
+- [x] **F6-05**: Safe defaults: read broad, create in safe zones, edit patch-first, delete/move/rename gated
 
 ### F7 — Backend / API
 - [ ] **F7-01**: FastAPI modular backend with internal modules (auth, vault, templates, gitops, exchange, policy, approvals, retrieval, agent, research, jobs, audit)
