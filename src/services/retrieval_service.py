@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Protocol, Any
 
 import httpx
@@ -143,7 +144,150 @@ class RetrievalService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
+    # ── Main search entry point ─────────────────────────────────
+
+    async def search(
+        self,
+        query: str,
+        workspace_id: Any,
+        query_vector: list[float] | None = None,
+        limit: int = 20,
+        mode: str = "hybrid",
+    ) -> list[RetrievalResult]:
+        """Main search entry point — combines FTS and vector search.
+
+        Args:
+            query: Search query string
+            workspace_id: Workspace to search within
+            query_vector: Pre-computed query embedding (required for vector/hybrid mode)
+            limit: Maximum results to return
+            mode: Search mode - "fts", "vector", or "hybrid"
+
+        Returns:
+            List of RetrievalResult with all scoring information
+        """
+        return await self.hybrid_search(
+            workspace_id=workspace_id,
+            query=query,
+            query_vector=query_vector or [],
+            limit=limit,
+            mode=mode,
+        )
+
     # ── FTS Search ────────────────────────────────────────────
+
+    async def get_fts_results(
+        self,
+        query: str,
+        workspace_id: Any,
+        limit: int = 20,
+    ) -> list[tuple[Any, float, int]]:
+        """Wrapper for FTS search returning (chunk_id, score, rank).
+
+        Args:
+            query: Search query string
+            workspace_id: Workspace to search within
+            limit: Maximum results to return
+
+        Returns:
+            List of (chunk_id, fts_score, rank) tuples
+        """
+        return await self.fts_search(workspace_id, query, limit)
+
+    async def get_vector_results(
+        self,
+        query_vector: list[float],
+        workspace_id: Any,
+        limit: int = 20,
+    ) -> list[tuple[Any, float, int]]:
+        """Wrapper for vector search returning (chunk_id, score, rank).
+
+        Args:
+            query_vector: Pre-computed query embedding
+            workspace_id: Workspace to search within
+            limit: Maximum results to return
+
+        Returns:
+            List of (chunk_id, cosine_similarity, rank) tuples
+        """
+        return await self.vector_search(workspace_id, query_vector, limit)
+
+    # ── Score breakdown ────────────────────────────────────────
+
+    @staticmethod
+    def build_score_breakdown(
+        fts_score: float,
+        vector_score: float,
+        note_updated_at: datetime | None,
+        fts_weight: float = 0.5,
+        vector_weight: float = 0.5,
+    ) -> dict[str, float]:
+        """Build score breakdown per D-108.
+
+        Args:
+            fts_score: Raw FTS ts_rank_cd score
+            vector_score: Raw cosine similarity score
+            note_updated_at: When the note was last updated (for recency boost)
+            fts_weight: Weight for FTS component (default 0.5)
+            vector_weight: Weight for vector component (default 0.5)
+
+        Returns:
+            Dict with fts_component, vector_component, fts_raw, vector_raw, recency_boost
+        """
+        breakdown = {
+            "fts_component": fts_score * fts_weight,
+            "vector_component": vector_score * vector_weight,
+            "fts_raw": fts_score,
+            "vector_raw": vector_score,
+        }
+
+        # Recency boost: +0.05 if note updated within 7 days
+        if note_updated_at:
+            now = datetime.now(timezone.utc)
+            note_updated = note_updated_at if note_updated_at.tzinfo else note_updated_at.replace(tzinfo=None)
+            days_old = (now - note_updated).days
+            if days_old <= 7:
+                breakdown["recency_boost"] = 0.05
+
+        return breakdown
+
+    # ── Why matched ────────────────────────────────────────────
+
+    def generate_why_matched(
+        self,
+        query: str,
+        chunk: Chunk,
+        fts_rank: int,
+        vector_rank: int,
+    ) -> str:
+        """Generate human-readable explanation of why this chunk was retrieved.
+
+        Args:
+            query: Original search query
+            chunk: The matched chunk
+            fts_rank: FTS rank (0 if not matched via FTS)
+            vector_rank: Vector rank (0 if not matched via vector)
+
+        Returns:
+            Human-readable string explaining the match
+        """
+        query_terms = query.lower().split()
+        content_lower = chunk.content.lower()
+        matching_terms = [t for t in query_terms if t in content_lower]
+
+        if fts_rank > 0 and vector_rank > 0:
+            return (
+                f"Matched on '{', '.join(matching_terms[:3])}' keywords "
+                f"(FTS rank {fts_rank}) with semantic similarity (vector rank {vector_rank})"
+            )
+        elif fts_rank > 0:
+            return f"Matched on '{', '.join(matching_terms[:3])}' keywords (FTS rank {fts_rank})"
+        elif vector_rank > 0:
+            return f"Matched on semantic similarity (vector rank {vector_rank})"
+        else:
+            return "Matched via hybrid retrieval"
+
+    # ── Core FTS Search ────────────────────────────────────────
 
     async def fts_search(
         self,
