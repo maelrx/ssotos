@@ -6,27 +6,25 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Protocol, Any
+from datetime import datetime
+from typing import Any, Protocol
 
 import httpx
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped, joinedload
 
 from src.db.models.chunk import Chunk
 from src.db.models.embedding import Embedding
 from src.db.models.note_projection import NoteProjection
 from src.schemas.retrieval import (
-    SearchRequest,
-    SearchResult,
-    SearchResponse,
     ContextPack,
+    ContextPackMetadata,
     ContextPackNeighbor,
     ContextPackProvenance,
-    ContextPackMetadata,
+    SearchRequest,
+    SearchResponse,
+    SearchResult,
 )
-
 
 # ─────────────────────────────────────────────────────────────
 # Embeddings Provider
@@ -119,13 +117,13 @@ def reciprocal_rank_fusion(
     rrf_scores: dict[Any, float] = {}
 
     # FTS contributions
-    for rank, (chunk_id, score, _) in enumerate(fts_results, start=1):
+    for rank, (chunk_id, _score, _) in enumerate(fts_results, start=1):
         if chunk_id not in rrf_scores:
             rrf_scores[chunk_id] = 0.0
         rrf_scores[chunk_id] += 1 / (k + rank)
 
     # Vector contributions
-    for rank, (chunk_id, score, _) in enumerate(vector_results, start=1):
+    for rank, (chunk_id, _score, _) in enumerate(vector_results, start=1):
         if chunk_id not in rrf_scores:
             rrf_scores[chunk_id] = 0.0
         rrf_scores[chunk_id] += 1 / (k + rank)
@@ -243,7 +241,7 @@ class RetrievalService:
 
         # Recency boost: +0.05 if note updated within 7 days
         if note_updated_at:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(datetime.UTC)
             note_updated = note_updated_at if note_updated_at.tzinfo else note_updated_at.replace(tzinfo=None)
             days_old = (now - note_updated).days
             if days_old <= 7:

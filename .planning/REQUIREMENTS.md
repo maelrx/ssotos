@@ -63,12 +63,12 @@
 - [x] **F9-07**: Self-improve within agent domain (free) vs user vault (restricted)
 
 ### F10 — Retrieval
-- [ ] **F10-01**: PostgreSQL FTS for lexical search
-- [ ] **F10-02**: pgvector for semantic search
-- [ ] **F10-03**: Hybrid retrieval (FTS + vector)
-- [ ] **F10-04**: Context packs with note reference, snippet, score, metadata, neighbors, provenance
-- [ ] **F10-05**: Chunking guided by headings
-- [ ] **F10-06**: Incremental indexing with rebuild capability
+- [x] **F10-01**: PostgreSQL FTS for lexical search
+- [x] **F10-02**: pgvector for semantic search
+- [x] **F10-03**: Hybrid retrieval (FTS + vector)
+- [x] **F10-04**: Context packs with note reference, snippet, score, metadata, neighbors, provenance
+- [x] **F10-05**: Chunking guided by headings
+- [x] **F10-06**: Incremental indexing with rebuild capability
 
 ### F11 — Note Copilot
 - [ ] **F11-01**: Per-note AI assistance panel
