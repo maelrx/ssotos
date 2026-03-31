@@ -10,7 +10,7 @@
 |---|-------|------|--------------|------------------|
 | 1 | Knowledge Filesystem Foundation | Establish canonical filesystem structure, schemas, templates, and daily notes | F1, F2, F3 | 6 |
 | 2 | Git / Exchange Boundary | Implement revision layer with Git, worktrees, diff, patch, and Exchange Zone | F4, F5 | 11 |
-| 3 | Policy Engine | Build capability-based policy system with safe defaults | F6 | 5 |
+| 3 | Policy Engine | 2/3 | In Progress|  |
 | 4 | Backend / API / Services / Jobs | Create FastAPI modular backend, Postgres schema, worker, audit | F7, F8, F13, F14, F15, F16 | 6 |
 | 5 | Agent Brain | Implement persistent agent memory and skills system | F9 | 7 |
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
@@ -20,6 +20,7 @@
 | 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |
 
 ---
+
 **
 ## Phase 1: Knowledge Filesystem Foundation
 
@@ -97,6 +98,8 @@
 
 **Goal:** Build the capability-based policy system — the gatekeeper that prevents unauthorized mutations.
 
+**Status:** 3 plans ready for execution
+
 **Requirements:** F6-01, F6-02, F6-03, F6-04, F6-05
 
 **Success Criteria:**
@@ -111,6 +114,11 @@
 - Policy evaluator service
 - Policy rule CRUD
 - Policy check integration in all services
+
+**Plans:**
+2/3 plans executed
+- 03-02-PLAN.md — Policy rules CRUD + Default rules (Wave 2)
+- 03-03-PLAN.md — Service integration with policy checks (Wave 3)
 
 ---
 
@@ -322,4 +330,5 @@ The build order is not arbitrary — each phase builds on the previous:
 
 *Roadmap created: 2026-03-31*
 *Phase 2 plan created: 2026-03-31*
+*Phase 3 plans created: 2026-03-31*
 *Ready for execution: yes*
