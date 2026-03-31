@@ -1,5 +1,7 @@
 """Policy engine — capability model and policy evaluator."""
+from core.policy.defaults import get_default_rules
 from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
+from core.policy.evaluator import PolicyEvaluator
 from core.policy.models import (
     NoteType,
     PolicyOutcome,
@@ -8,7 +10,7 @@ from core.policy.models import (
     PolicyRule,
     SensitivityLevel,
 )
-from core.policy.evaluator import PolicyEvaluator
+from core.policy.rules import PolicyRulesService
 
 __all__ = [
     "CapabilityGroup",
@@ -21,4 +23,6 @@ __all__ = [
     "PolicyRule",
     "SensitivityLevel",
     "PolicyEvaluator",
+    "get_default_rules",
+    "PolicyRulesService",
 ]
