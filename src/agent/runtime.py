@@ -2,6 +2,7 @@
 
 Constructs a PydanticAI Agent with skills as tools and SOUL.md as system prompt.
 """
+import asyncio
 from typing import Any
 
 from pydantic import BaseModel
@@ -62,14 +63,14 @@ def build_agent(skill_service: SkillService) -> Agent[AgentDeps]:
     Note: asyncio.run() is used for one-time initialization at agent build time
     (startup, not per-request).
     """
-    # Load skills to get their manifests
-    skills_response = skill_service.list_skills()
+    # Load skills to get their manifests (async call from sync context)
+    skills_response = asyncio.run(skill_service.list_skills())
     skill_names = [s.name for s in skills_response.skills]
 
-    # Load SOUL.md for system prompt
+    # Load SOUL.md for system prompt (async call from sync context)
     from src.services.agent_brain_service import AgentBrainService
     brain_svc = AgentBrainService()
-    soul_response = brain_svc.read_soul()
+    soul_response = asyncio.run(brain_svc.read_soul())
 
     # Build system prompt from SOUL.md sections
     soul_dict = soul_response.content.model_dump() if hasattr(soul_response.content, "model_dump") else soul_response.content

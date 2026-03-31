@@ -194,6 +194,8 @@ class SessionSummary(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     session_id: UUID = Field(default_factory=uuid4)
+    date: str = ""  # YYYY-MM-DD of the session
+    duration_minutes: int = 0  # Session duration
     what_happened: str = ""
     key_decisions: list[str] = Field(default_factory=list)
     open_questions: list[str] = Field(default_factory=list)
