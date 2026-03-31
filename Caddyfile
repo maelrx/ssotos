@@ -1,0 +1,43 @@
+# Knowledge OS Core — Reverse Proxy Configuration
+
+# Development/localhost (no HTTPS)
+localhost {
+    reverse_proxy /api/* app-api:8000
+    reverse_proxy /* app-api:8000
+
+    # SPA static files (when frontend built)
+    # handle /* {
+    #     file_server /workspace/frontend/dist
+    # }
+}
+
+# Production (uncomment and configure domain)
+# :443, knowledge-os.example.com {
+#     reverse_proxy /api/* app-api:8000
+#     reverse_proxy /sse/* app-api:8000
+#     reverse_proxy /* app-api:8000
+#
+#     # Enable HTTPS automatically via Let's Encrypt
+#     tls {
+#         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+#     }
+#
+#     # Security headers
+#     header {
+#         X-Frame-Options DENY
+#         X-Content-Type-Options nosniff
+#         Referrer-Policy strict-origin-when-cross-origin
+#         Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+#     }
+#
+#     # Logging
+#     log {
+#         output file /var/log/caddy/access.log
+#     }
+# }
+
+# Development fallback for HTTP
+http:// {
+    reverse_proxy /api/* app-api:8000
+    reverse_proxy /* app-api:8000
+}
