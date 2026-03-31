@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse
+from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse, audit
+from src.middleware.audit import AuditMiddleware
 from src.db.database import engine
 
 
@@ -39,6 +40,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Audit middleware for all API requests (per D-57: F14-01 to F14-05)
+    app.add_middleware(AuditMiddleware)
+
     # Health check
     @app.get("/health", tags=["health"])
     async def health_check():
@@ -57,6 +61,7 @@ def create_app() -> FastAPI:
     app.include_router(sse.router, prefix="/api/jobs", tags=["jobs"])  # SSE at /jobs/events
     app.include_router(policy.router, prefix="/api/policy", tags=["policy"])
     app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
+    app.include_router(audit.router, prefix="/api/admin", tags=["admin"])
 
     return app
 

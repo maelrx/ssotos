@@ -9,7 +9,6 @@ from typing import Any
 from src.db.session import get_db
 from src.db.models.workspace import Workspace
 from src.db.models.actor import Actor
-from src.db.models.audit_log import AuditLog
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -20,47 +19,6 @@ class CreateWorkspaceRequest:
         self.name = name
         self.root_path = root_path
         self.config = config or {}
-
-
-@router.get("/audit-logs")
-async def query_audit_logs(
-    actor: str | None = Query(None, description="Filter by actor"),
-    domain: str | None = Query(None, description="Filter by domain"),
-    action: str | None = Query(None, description="Filter by action"),
-    limit: int = Query(100, ge=1, le=500),
-    db: AsyncSession = Depends(get_db),
-):
-    """Query audit logs with filters (F14-01)."""
-    stmt = select(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit)
-
-    if actor:
-        stmt = stmt.where(AuditLog.actor == actor)
-    if domain:
-        stmt = stmt.where(AuditLog.domain == domain)
-    if action:
-        stmt = stmt.where(AuditLog.action == action)
-
-    result = await db.execute(stmt)
-    logs = result.scalars().all()
-
-    return {
-        "logs": [
-            {
-                "id": str(log.id),
-                "event_type": log.event_type,
-                "actor": log.actor,
-                "domain": log.domain,
-                "action": log.action,
-                "capability_group": log.capability_group,
-                "outcome": log.outcome,
-                "reason": log.reason,
-                "trace_id": log.trace_id,
-                "created_at": log.created_at.isoformat(),
-            }
-            for log in logs
-        ],
-        "total": len(logs),
-    }
 
 
 @router.get("/workspaces")

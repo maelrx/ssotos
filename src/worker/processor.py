@@ -5,8 +5,10 @@ import structlog
 from src.db.database import async_session_maker
 from src.worker.queue import JobQueue, JobClaim
 from src.worker.handlers import HANDLERS
+from src.core.otel import create_span, get_current_trace_id
 
 logger = structlog.get_logger(__name__)
+
 
 class JobProcessor:
     """Processes jobs from the queue by dispatching to handlers."""
@@ -24,6 +26,7 @@ class JobProcessor:
 
             job = claim.job
             handler = HANDLERS.get(job.job_type)
+            trace_id = get_current_trace_id()
 
             if handler is None:
                 await self.queue.fail(
@@ -38,10 +41,22 @@ class JobProcessor:
                     job_id=str(job.id),
                     job_type=job.job_type,
                     worker_id=self.queue.worker_id,
+                    trace_id=trace_id,
                 )
 
-                # Call the handler
-                result = await handler(job.input_data)
+                # Create OTel span for job processing
+                with create_span(
+                    f"job.{job.job_type}",
+                    attributes={
+                        "job.id": str(job.id),
+                        "job.type": job.job_type,
+                        "worker.id": self.queue.worker_id or "",
+                        "trace_id": trace_id or "",
+                    }
+                ) as span:
+                    # Call the handler
+                    result = await handler(job.input_data)
+                    span.set_attribute("job.result", "success")
 
                 await self.queue.complete(db, job, result)
                 return True
@@ -52,6 +67,7 @@ class JobProcessor:
                     job_id=str(job.id),
                     job_type=job.job_type,
                     error=str(e),
+                    trace_id=trace_id,
                 )
                 await self.queue.fail(db, job, str(e))
                 return True
