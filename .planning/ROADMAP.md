@@ -153,11 +153,11 @@
 - Deployment documentation
 
 **Plans:**
-4/7 plans executed
+5/7 plans executed
 - 04-01-PLAN.md — Database foundation: SQLAlchemy models, migrations, 12 tables (Wave 1) — COMPLETE
 - 04-02-PLAN.md — FastAPI app shell: all routers, SSE endpoint, Pydantic schemas (Wave 1) — COMPLETE
 - 04-03-PLAN.md — Background worker: job queue, 8 handlers, retry logic (Wave 2) — COMPLETE
-- 04-04-PLAN.md — Observability: structlog, audit logs, OpenTelemetry (Wave 2)
+- 04-04-PLAN.md — Observability: structlog, audit logs, OpenTelemetry (Wave 2) — COMPLETE
 - 04-05-PLAN.md — React SPA: workspace shell, CodeMirror editor, all views (Wave 3)
 - 04-06-PLAN.md — Docker Compose + Caddy + deployment docs (Wave 3)
 
@@ -181,6 +181,13 @@
 - Summary: 04-03-SUMMARY.md
 - Completed: 3/3 tasks
 - Key files: src/worker/queue.py, src/worker/processor.py, src/worker/main.py, src/worker/handlers/*.py
+
+**Plan 04-04 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: d6b2cc3, fc4d4c8, 376d30c, 3452c75, 9db46b6
+- Summary: 04-04-SUMMARY.md
+- Completed: 4/4 tasks (+ 1 bonus: OTel HTTP middleware)
+- Key files: src/core/logging.py, src/core/audit.py, src/core/audit_events.py, src/core/otel.py, src/middleware/audit.py, src/api/audit.py
 
 ---
 
