@@ -5,6 +5,9 @@ from pathlib import Path
 from typing import Literal
 
 from core.events import emit, EventType
+from core.policy.service import PolicyService, PolicyDeniedException
+from core.policy.models import PolicyRequest
+from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
 
 
 class GitError(Exception):
@@ -27,6 +30,7 @@ class GitService:
     def __init__(self, repo_path: Path, bare: bool = False):
         self.repo_path = Path(repo_path)
         self.bare = bare
+        self.policy = PolicyService()
 
     def _git_cmd(self, *args: str, capture_output: bool = True, check: bool = True) -> subprocess.CompletedProcess:
         """Execute a git command with proper environment."""
@@ -135,6 +139,18 @@ class GitService:
         - import/<source>/<ts>
         - review/<id>
         """
+        # Policy check before creating branch
+        policy_request = PolicyRequest(
+            actor=start_point,
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.CREATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         # Validate naming convention
         if name in ("main", "master"):
             raise GitError(
@@ -160,6 +176,18 @@ class GitService:
 
     def delete_branch(self, name: str) -> None:
         """Delete a branch (safe — won't delete main)."""
+        # Policy check before deleting branch
+        policy_request = PolicyRequest(
+            actor="system",
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.DELETE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         if name in ("main", "master"):
             raise GitError(
                 ["git", "branch", "-d", name],
@@ -254,6 +282,18 @@ class GitService:
 
     def remove_worktree(self, path: Path, force: bool = False) -> None:
         """Remove a worktree. Must be clean (or force=True)."""
+        # Policy check before removing worktree
+        policy_request = PolicyRequest(
+            actor="system",
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.DELETE,
+            domain=Domain.EXCHANGE,
+            path=str(path),
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         path = Path(path)
         if force:
             self._git_cmd("worktree", "remove", "--force", str(path))
@@ -356,6 +396,18 @@ class GitService:
 
         If dry_run=True, validates patch without applying.
         """
+        # Policy check before applying patch
+        policy_request = PolicyRequest(
+            actor="system",
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=str(patch_path),
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         patch_path = Path(patch_path)
         if dry_run:
             result = self._git_cmd_no_check("apply", "--check", str(patch_path))
@@ -466,6 +518,18 @@ class GitService:
 
         Returns True on clean merge, False on conflicts.
         """
+        # Policy check before merge
+        policy_request = PolicyRequest(
+            actor="system",
+            capability_group=CapabilityGroup.EXCHANGE,
+            action=CapabilityAction.UPDATE,
+            domain=Domain.EXCHANGE,
+            path=None,
+            note_type=None,
+            sensitivity=0
+        )
+        self.policy.check_or_raise(policy_request)
+
         args = ["merge"]
         if no_ff:
             args.append("--no-ff")
