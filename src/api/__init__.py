@@ -2,7 +2,7 @@
 from fastapi import APIRouter
 
 # Re-export all routers for convenient imports
-from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse
+from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse, agent
 
 __all__ = [
     "vault",
@@ -17,4 +17,5 @@ __all__ = [
     "admin",
     "auth",
     "sse",
+    "agent",
 ]

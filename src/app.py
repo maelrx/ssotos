@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse, audit
+from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse, audit, agent
 from src.middleware.audit import AuditMiddleware
 from src.db.database import engine
 from src.core.logging import configure_logging
@@ -72,6 +72,7 @@ def create_app() -> FastAPI:
     app.include_router(policy.router, prefix="/api/policy", tags=["policy"])
     app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
     app.include_router(audit.router, prefix="/api/admin", tags=["admin"])
+    app.include_router(agent.router, prefix="/api", tags=["agent"])
 
     return app
 
