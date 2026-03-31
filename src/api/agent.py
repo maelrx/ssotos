@@ -321,3 +321,71 @@ async def create_session_summary(
     Session summaries are written by the reflect_agent job after sessions.
     """
     return await brain_svc.write_session_summary(str(session_id), summary)
+
+
+# ==============================================================================
+# Self-improve endpoint (D-81, D-83, F9-07)
+# ==============================================================================
+
+
+class SelfImproveRequest(BaseModel):
+    """Request to self-improve brain files per D-81, D-83, F9-07.
+
+    Enables the agent to freely modify brain files through the async job queue.
+    The job handler will process the mutations without gating (D-82).
+    """
+    soul_update: dict[str, Any] | None = None
+    memory_update: dict[str, Any] | None = None
+    user_update: dict[str, Any] | None = None
+
+
+class SelfImproveResponse(BaseModel):
+    """Response for self-improve endpoint."""
+    status: str
+    job_id: str
+    message: str
+
+
+@router.post("/self-improve", response_model=SelfImproveResponse)
+async def self_improve(
+    request: SelfImproveRequest,
+    db: AsyncSession = Depends(get_db),
+    policy_service: PolicyService = Depends(get_policy_service),
+) -> SelfImproveResponse:
+    """Self-improve endpoint per D-81, D-83, F9-07.
+
+    Enables the agent to freely modify brain files (per F9-07, D-81, D-83)
+    through the async job queue. The job handler will process the mutations
+    without gating (D-82).
+
+    Policy check for agent.brain.write capability per D-74.
+    """
+    # Policy check per D-74
+    _check_brain_write_policy(policy_service, "agent-brain")
+
+    # Build brain_mutations payload per D-82
+    brain_mutations = {}
+    if request.soul_update:
+        brain_mutations["soul_update"] = request.soul_update
+    if request.memory_update:
+        brain_mutations["memory_update"] = request.memory_update
+    if request.user_update:
+        brain_mutations["user_update"] = request.user_update
+
+    if not brain_mutations:
+        raise HTTPException(status_code=400, detail="At least one brain mutation (soul_update, memory_update, user_update) is required")
+
+    workspace_id = await _get_default_workspace_id(db)
+
+    # Enqueue reflect_agent job with brain_mutations payload per D-82
+    job_data = {"brain_mutations": brain_mutations}
+    job = await _enqueue_reflect_agent_job(db, workspace_id, job_data)
+    await db.commit()
+
+    logger.info("self_improve_enqueued", job_id=str(job.id), mutations=list(brain_mutations.keys()))
+
+    return SelfImproveResponse(
+        status="enqueued",
+        job_id=str(job.id),
+        message="Self-improvement job enqueued. Brain mutations will be processed asynchronously.",
+    )
