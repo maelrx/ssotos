@@ -7,6 +7,12 @@ from sqlalchemy import text
 from src.api import vault, templates, retrieval, copilot, exchange, approvals, research, jobs, policy, admin, auth, sse, audit
 from src.middleware.audit import AuditMiddleware
 from src.db.database import engine
+from src.core.logging import configure_logging
+from src.core.otel import configure_otel
+
+# Configure logging and OTel at startup
+configure_logging()
+configure_otel()
 
 
 @asynccontextmanager
@@ -42,6 +48,10 @@ def create_app() -> FastAPI:
 
     # Audit middleware for all API requests (per D-57: F14-01 to F14-05)
     app.add_middleware(AuditMiddleware)
+
+    # OpenTelemetry instrumentation for HTTP requests (per D-58)
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    FastAPIInstrumentor.instrument_app(app)
 
     # Health check
     @app.get("/health", tags=["health"])
