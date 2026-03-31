@@ -286,10 +286,10 @@
 - Index management (incremental + rebuild)
 
 **Plans:**
-2/3 plans executed
+3/3 plans executed
 - 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas — COMPLETE
 - 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration — COMPLETE
-- 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope) — PENDING
+- 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope) — COMPLETE
 
 **Plan 06-01 Execution:**
 - Status: COMPLETE (2026-03-31)
@@ -304,6 +304,13 @@
 - Summary: 06-02-SUMMARY.md
 - Completed: 3/3 tasks
 - Key files: src/services/chunking_service.py, src/services/embedding_service.py, src/services/retrieval_service.py
+
+**Plan 06-03 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: 4fac79a, 6d054b9, a12b05d, 6b63c24, d5c9ad1
+- Summary: 06-03-SUMMARY.md
+- Completed: 5/5 tasks
+- Key files: src/api/retrieval.py, src/worker/handlers/index_note.py, src/worker/handlers/generate_embeddings.py, src/worker/handlers/reindex_scope.py, pyproject.toml
 
 ---
 

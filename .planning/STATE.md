@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 3 | Policy Engine | complete | 3 |
 | 4 | Backend / API / Services / Jobs | complete | 6 |
 | 5 | Agent Brain | complete | 3 |
-| 6 | Retrieval | in_progress | 2 |
+| 6 | Retrieval | complete | 3 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
 | 9 | Durability / HITL | pending | 0 |
@@ -188,7 +188,25 @@ Phase 06 Plan 06-02: COMPLETE (Wave 2)
 - tiktoken dependency added
 - Ready for Phase 06-03 (API endpoints, job handlers)
 
-Phase 06 Plans: PLANNING COMPLETE (3 waves)
+Phase 06 Plan 06-03: COMPLETE (Wave 3)
+
+- 5/5 tasks executed
+- SUMMARY.md created at .planning/phases/06-retrieval/06-03-SUMMARY.md
+- API endpoints: GET /retrieval/search, /context/{note_id}, /stats/{workspace_id}, POST /retrieval/reindex
+- handle_index_note: upsert/delete, chunking, FTS indexing, enqueue embeddings
+- handle_generate_embeddings: batch embedding generation via OpenAI API
+- handle_reindex_scope: enumerate notes, enqueue index_note at priority=0
+- B008 ruff ignore for FastAPI Query/Depends pattern
+- All Phase 6 Retrieval complete — ready for Phase 7 (Note Copilot)
+
+Phase 06 Plans: ALL COMPLETE (3/3 waves)
+
+- 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas — COMPLETE
+- 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration — COMPLETE
+- 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope) — COMPLETE
+- Phase 6 Retrieval COMPLETE — ready for Phase 7 (Note Copilot)
+
+## Workflow State
 
 - 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas
 - 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration
