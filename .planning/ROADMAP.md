@@ -234,6 +234,19 @@
 - Session summaries persisted to `agent-brain/sessions/<session-id>.md`
 - SOUL.md, MEMORY.md, USER.md accessible via `/agent/brain/*` endpoints
 
+**Plans:**
+1/3 plans executed
+- 05-01-PLAN.md — Wave 1: pydanticai dependency, schemas, AgentBrainService, SkillService (Infrastructure) — COMPLETE
+- 05-02-PLAN.md — Wave 2: Agent API router, PydanticAI runtime, tools, app registration (API + Runtime) — PENDING
+- 05-03-PLAN.md — Wave 3: reflect_agent handler, consolidate_memory handler, self-improve endpoint (Job Handlers) — PENDING
+
+**Plan 05-01 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: bee5439, 51a6b3f, 0298ebf, 385fb5a
+- Summary: 05-01-SUMMARY.md
+- Completed: 4/4 tasks
+- Key files: pyproject.toml, src/schemas/agent.py, src/services/agent_brain_service.py, src/services/skill_service.py
+
 ---
 
 ## Phase 6: Retrieval
@@ -390,4 +403,5 @@ The build order is not arbitrary — each phase builds on the previous:
 *Phase 2 plan created: 2026-03-31*
 *Phase 3 plans created: 2026-03-31*
 *Phase 4 plans created: 2026-03-31*
+*Phase 5 plans created: 2026-03-31*
 *Ready for execution: yes*

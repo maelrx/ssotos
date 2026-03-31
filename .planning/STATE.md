@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-last_updated: "2026-03-31T19:56:43.908Z"
+status: Executing Phase 05
+last_updated: "2026-03-31T20:57:14.021Z"
 progress:
   total_phases: 10
   completed_phases: 2
-  total_plans: 9
+  total_plans: 12
   completed_plans: 11
 ---
 
@@ -35,7 +35,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 2 | Git / Exchange Boundary | complete | 1 |
 | 3 | Policy Engine | complete | 3 |
 | 4 | Backend / API / Services / Jobs | complete | 6 |
-| 5 | Agent Brain | in_progress | 0 |
+| 5 | Agent Brain | in_progress | 1 |
 | 6 | Retrieval | pending | 0 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
@@ -148,12 +148,15 @@ Phase 04 Plan 04-06: COMPLETE
 - pyproject.toml and uv.lock created (missing prerequisite for Docker builds)
 - All Phase 4 plans complete - ready for Phase 5 (Agent Brain)
 
-Phase 05 Context: GATHERED
+Phase 05 Plan 05-01: COMPLETE
 
-- CONTEXT.md created at .planning/phases/05-agent-brain/05-CONTEXT.md
-- Decisions D-65 to D-89 covering: brain filesystem, skill system, session summaries, SOUL/MEMORY/USER, self-improve workflow, API endpoints
-- 05-DISCUSSION-LOG.md created
-- Ready for planning
+- 4/4 tasks executed
+- SUMMARY.md created at .planning/phases/05-agent-brain/05-01-SUMMARY.md
+- pydanticai dependency added
+- 20 Pydantic v2 schemas for agent brain (Soul, Memory, UserProfile, Skill, Session)
+- AgentBrainService with brain file CRUD (SOUL.md, MEMORY.md, USER.md, sessions)
+- SkillService with manifest loading and invocation
+- Ready for Phase 05-02 (Agent API router)
 
 ## Workflow State
 
