@@ -22,12 +22,12 @@ O produto resolve um problema estrutural: ferramentas atuais misturam camadas qu
 - ✓ Sistema de arquivos canônico com estrutura de vault (user-vault/, agent-brain/, exchange/, raw/) — Phase 1
 - ✓ Schemas e templates-base (daily, project, area, resource, fleeting, permanent, source, synthesis) — Phase 1
 - ✓ Daily notes com templates selecionáveis — Phase 1
+- ✓ Git como ledger editorial (branches, worktrees, diff, patch, merge) — Phase 2
+- ✓ Exchange Zone com proposals, reviews e patch pipeline — Phase 2
 
 ### Active
 
-- [ ] Git como ledger editorial (branches, worktrees, diff, patch, merge)
-- [ ] Git como ledger editorial (branches, worktrees, diff, patch, merge)
-- [ ] Exchange Zone com proposals, reviews e patch pipeline
+- [ ] Policy Engine mínimo com capability model (vault.*, agent.*, research.*, exchange.*)
 - [ ] Policy Engine mínimo com capability model (vault.*, agent.*, research.*, exchange.*)
 - [ ] Backend FastAPI modular (módulos: auth, vault, templates, gitops, exchange, policy, approvals, retrieval, agent, research, jobs, audit)
 - [ ] Postgres como banco operacional (tabelas: workspaces, actors, notes_projection, policy_rules, approvals, proposals, jobs, chunks, embeddings, artifacts, audit_logs)
