@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 | 3 | Policy Engine | complete | 3 |
 | 4 | Backend / API / Services / Jobs | complete | 6 |
 | 5 | Agent Brain | complete | 3 |
-| 6 | Retrieval | pending | 0 |
+| 6 | Retrieval | in_progress | 1 |
 | 7 | Note Copilot | pending | 0 |
 | 8 | Research Runtime | pending | 0 |
 | 9 | Durability / HITL | pending | 0 |
@@ -167,11 +167,23 @@ Phase 05 Plan 05-03: COMPLETE (Wave 3)
 - self-improve endpoint POST /agent/self-improve with policy check and job enqueue
 - All Phase 5 plans complete - ready for Phase 6 (Retrieval)
 
-Phase 06 Plan 06-01: PENDING
+- 2026-03-31: Phase 06 Plan 06-01 executed — 4/4 tasks complete
 
-- Context captured at .planning/phases/06-retrieval/06-CONTEXT.md
-- Decisions: D-90 to D-116 (embedding, hybrid fusion, chunking, context packs, index management)
-- Ready for /gsd:plan-phase 06 --auto
+Phase 06 Plan 06-01: COMPLETE
+
+- 4/4 tasks executed
+- SUMMARY.md created at .planning/phases/06-retrieval/06-01-SUMMARY.md
+- FTS tsvector on chunks (GIN index), pgvector vector(1536) on embeddings (HNSW index)
+- RetrievalService with FTS, vector, RRF hybrid search, context pack builder
+- Pydantic schemas for search and context packs
+- Ready for Phase 06-02 (ChunkingService, EmbeddingService, HybridSearch integration)
+
+Phase 06 Plans: PLANNING COMPLETE (3 waves)
+
+- 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas
+- 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration
+- 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope)
+- Ready for /gsd:execute-phase 06
 
 ## Workflow State
 

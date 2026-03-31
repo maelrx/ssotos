@@ -285,6 +285,19 @@
 - Chunking strategy
 - Index management (incremental + rebuild)
 
+**Plans:**
+1/3 plans executed
+- 06-01-PLAN.md — Wave 1: DB migration (FTS + pgvector), RetrievalService skeleton, retrieval schemas — COMPLETE
+- 06-02-PLAN.md — Wave 2: ChunkingService, EmbeddingService, HybridSearch integration — PENDING
+- 06-03-PLAN.md — Wave 3: API endpoints, job handlers (index_note, generate_embeddings, reindex_scope) — PENDING
+
+**Plan 06-01 Execution:**
+- Status: COMPLETE (2026-03-31)
+- Commits: 7753a60, da97936, 8e6b6c1, b5deb2d
+- Summary: 06-01-SUMMARY.md
+- Completed: 4/4 tasks
+- Key files: alembic/versions/002_add_fts_and_pgvector.py, src/db/models/embedding.py, src/schemas/retrieval.py, src/services/retrieval_service.py
+
 ---
 
 ## Phase 7: Note Copilot
