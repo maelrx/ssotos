@@ -1,0 +1,30 @@
+name: "PARA-like"
+description: "Operational organization focused on Projects and Areas"
+version: 1
+
+enabled_note_types:
+  - project
+  - area
+  - resource
+  - archive-item
+  - fleeting
+  - permanent
+  - daily
+  - index-note
+
+structure:
+  daily_folder: "01-Daily"
+  projects_folder: "02-Projects"
+  areas_folder: "03-Areas"
+  resources_folder: "04-Resources"
+  archive_folder: "05-Archive"
+
+daily_sections:
+  - Inbox
+  - Focus
+  - Notes
+  - "Linked Projects"
+  - Decisions
+  - Learnings
+  - Tasks
+  - Review

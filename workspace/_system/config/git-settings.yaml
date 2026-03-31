@@ -1,0 +1,42 @@
+# Git Configuration v1
+# Phase 2: Exchange Boundary settings
+
+version: 1
+
+repositories:
+  user_vault:
+    bare_path: "../repos/user-vault.git"
+    worktree_path: "../user-vault"
+    main_branch: "main"
+
+  agent_brain:
+    bare_path: "../repos/agent-brain.git"
+    worktree_path: "../agent-brain"
+    main_branch: "main"
+
+branch_naming:
+  # D-25: Branch naming conventions
+  proposal: "proposal/{actor}/{id}"
+  research: "research/{job_id}"
+  import: "import/{source}/{timestamp}"
+  review: "review/{id}"
+
+worktree:
+  # D-23: Worktree base directory
+  base_path: "../runtime/worktrees"
+  # Naming pattern: {type}-{actor}-{id} e.g., proposal-agent-001
+  naming_pattern: "{type}-{actor}-{id}"
+  # Auto-cleanup worktrees older than this
+  max_age_hours: 72
+
+patch:
+  # D-29, D-31: Patch-first mutation settings
+  format: "unified"
+  self_contained: true
+  include_metadata: true
+
+rollout:
+  # F4-06: Merge strategy
+  merge_strategy: "no_ff"  # No fast-forward, explicit merge commits
+  # F4-07: Rollback settings
+  max_rollback_history: 10

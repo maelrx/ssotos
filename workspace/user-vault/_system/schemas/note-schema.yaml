@@ -1,0 +1,135 @@
+# Note Frontmatter Schema v1
+# Strict validation — invalid frontmatter is REJECTED at write time, not warned
+
+required:
+  - id
+  - kind
+  - status
+  - title
+  - tags
+  - links
+  - source
+  - policy
+
+fields:
+  id:
+    type: string
+    description: "Stable UUID. Title can change, id cannot."
+    pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    immutable: true
+
+  kind:
+    type: enum
+    description: "Note type determining schema"
+    values:
+      - daily
+      - project
+      - area
+      - resource
+      - archive-item
+      - fleeting
+      - permanent
+      - research-note
+      - source-note
+      - synthesis-note
+      - index-note
+      - template-instance
+
+  status:
+    type: enum
+    description: "Note lifecycle status"
+    values:
+      - draft
+      - active
+      - archived
+      - deleted
+
+  title:
+    type: string
+    description: "Human-readable title"
+    min_length: 1
+    max_length: 500
+
+  tags:
+    type: list
+    description: "Arbitrary string tags"
+    items:
+      type: string
+    default: []
+
+  links:
+    type: object
+    description: "Structured internal links"
+    properties:
+      related:
+        type: list
+        items:
+          type: string
+        default: []
+      project:
+        type: string|null
+        description: "Parent project ID"
+      area:
+        type: string|null
+        description: "Parent area ID"
+    default:
+      related: []
+      project: null
+      area: null
+
+  source:
+    type: object
+    description: "Origin information for ingested content"
+    properties:
+      type:
+        type: enum
+        values:
+          - human
+          - crawler
+          - document
+          - research
+          - import
+          - ai
+      provenance:
+        type: list
+        items:
+          type: string
+        default: []
+    required:
+      - type
+    default:
+      type: human
+      provenance: []
+
+  policy:
+    type: object
+    description: "Mutation policy for this note"
+    properties:
+      sensitivity:
+        type: enum
+        values:
+          - low
+          - normal
+          - high
+          - critical
+        default: normal
+      ai_edit_mode:
+        type: enum
+        values:
+          - allow_direct
+          - allow_patch_only
+          - allow_in_exchange_only
+          - deny
+        default: allow_patch_only
+    default:
+      sensitivity: normal
+      ai_edit_mode: allow_patch_only
+
+  created_at:
+    type: datetime
+    description: "ISO 8601 creation timestamp"
+    immutable: true
+
+  updated_at:
+    type: datetime
+    description: "ISO 8601 last modified timestamp"

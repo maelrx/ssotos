@@ -1,0 +1,22 @@
+name: "Zettelkasten-like"
+description: "Atomic knowledge nuggets with dense linking"
+version: 1
+
+enabled_note_types:
+  - fleeting
+  - permanent
+  - daily
+  - source-note
+  - synthesis-note
+  - index-note
+
+structure:
+  daily_folder: "01-Daily"
+  archive_folder: "05-Archive"
+
+daily_sections:
+  - Inbox
+  - Notes
+  - "Fleeting Notes"
+  - "Linked Knowledge"
+  - Tasks

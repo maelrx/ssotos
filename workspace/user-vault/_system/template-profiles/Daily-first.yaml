@@ -1,0 +1,29 @@
+name: "Daily-first"
+description: "Daily notes as the hub of capture and connection"
+version: 1
+
+enabled_note_types:
+  - daily
+  - project
+  - area
+  - resource
+  - fleeting
+  - permanent
+  - index-note
+
+structure:
+  daily_folder: "01-Daily"
+  projects_folder: "02-Projects"
+  areas_folder: "03-Areas"
+  resources_folder: "04-Resources"
+  archive_folder: "05-Archive"
+
+daily_sections:
+  - Inbox
+  - Focus
+  - Notes
+  - "Linked Projects"
+  - Decisions
+  - Learnings
+  - Tasks
+  - Review

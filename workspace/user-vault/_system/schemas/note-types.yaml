@@ -1,0 +1,93 @@
+# Note Types Definition v1
+# All 11 canonical note types
+
+types:
+  daily:
+    description: "Contextual daily capture unit"
+    icon: "📅"
+    color: "#4A90D9"
+    default_status: active
+    has_date: true
+    date_format: "YYYY-MM-DD"
+    body_template: daily
+
+  project:
+    description: "Time-bound initiative with outcome"
+    icon: "🎯"
+    color: "#50C878"
+    default_status: active
+    body_template: project
+
+  area:
+    description: "Long-running responsibility area"
+    icon: "🏛️"
+    color: "#9B59B6"
+    default_status: active
+    body_template: area
+
+  resource:
+    description: "Reference material for ongoing work"
+    icon: "📚"
+    color: "#F39C12"
+    default_status: active
+    body_template: resource
+
+  archive-item:
+    description: "Archived note no longer active"
+    icon: "📦"
+    color: "#95A5A6"
+    default_status: archived
+    body_template: null
+
+  fleeting:
+    description: "Transient thought awaiting processing"
+    icon: "💨"
+    color: "#E74C3C"
+    default_status: draft
+    body_template: fleeting
+
+  permanent:
+    description: "Atomic, durable knowledge nugget"
+    icon: "💎"
+    color: "#3498DB"
+    default_status: active
+    body_template: permanent
+
+  research-note:
+    description: "Note capturing research findings"
+    icon: "🔬"
+    color: "#1ABC9C"
+    default_status: draft
+    body_template: research-note
+    links_to:
+      - source-note
+
+  source-note:
+    description: "Reference to external source with annotation"
+    icon: "📄"
+    color: "#34495E"
+    default_status: active
+    body_template: source-note
+    has_source_url: true
+
+  synthesis-note:
+    description: "Integration of multiple sources/notes"
+    icon: "🧬"
+    color: "#E91E63"
+    default_status: draft
+    body_template: synthesis-note
+
+  index-note:
+    description: "Entry point or hub connecting related notes"
+    icon: "📑"
+    color: "#607D8B"
+    default_status: active
+    body_template: index-note
+
+  template-instance:
+    description: "Note created from a template"
+    icon: "📝"
+    color: "#795548"
+    default_status: draft
+    body_template: null
+    has_template_ref: true

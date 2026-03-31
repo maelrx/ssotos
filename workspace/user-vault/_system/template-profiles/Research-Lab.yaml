@@ -1,0 +1,29 @@
+name: "Research Lab"
+description: "Research-focused with source tracking and synthesis"
+version: 1
+
+enabled_note_types:
+  - daily
+  - project
+  - area
+  - resource
+  - research-note
+  - source-note
+  - synthesis-note
+  - index-note
+
+structure:
+  daily_folder: "01-Daily"
+  projects_folder: "02-Projects"
+  areas_folder: "03-Areas"
+  resources_folder: "04-Resources"
+  archive_folder: "05-Archive"
+
+daily_sections:
+  - Inbox
+  - Research Log
+  - Notes
+  - "Active Sources"
+  - Decisions
+  - Tasks
+  - Review

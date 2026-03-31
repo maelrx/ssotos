@@ -1,0 +1,38 @@
+# Vault Configuration v1
+version: 1
+
+structure:
+  numbering_enabled: true
+  folders:
+    - "00-Inbox"
+    - "01-Daily"
+    - "02-Projects"
+    - "03-Areas"
+    - "04-Resources"
+    - "05-Archive"
+    - "Templates"
+    - "Attachments"
+
+schema:
+  strict_mode: true
+  auto_fill:
+    - created_at
+    - updated_at
+    - id
+
+daily_notes:
+  enabled: true
+  folder: "01-Daily"
+  format: "YYYY-MM-DD"
+  extension: ".md"
+  sections:
+    - Inbox
+    - Focus
+    - Notes
+    - "Linked Projects"
+    - Decisions
+    - Learnings
+    - Tasks
+    - Review
+
+note_types: "schemas/note-types.yaml"

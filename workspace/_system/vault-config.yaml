@@ -1,0 +1,13 @@
+# Workspace Configuration v1
+version: 1
+workspace:
+  name: "Knowledge OS Workspace"
+  created: "YYYY-MM-DD"
+  template_profile: null
+
+system:
+  vault_path: "../user-vault"
+  brain_path: "../agent-brain"
+  exchange_path: "../exchange"
+  raw_path: "../raw"
+  runtime_path: "../runtime"

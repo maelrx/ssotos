@@ -1,0 +1,26 @@
+name: "Project OS"
+description: "Project management with decisions, specs, and logs"
+version: 1
+
+enabled_note_types:
+  - project
+  - daily
+  - area
+  - resource
+  - archive-item
+  - index-note
+
+structure:
+  daily_folder: "01-Daily"
+  projects_folder: "02-Projects"
+  areas_folder: "03-Areas"
+  resources_folder: "04-Resources"
+  archive_folder: "05-Archive"
+
+daily_sections:
+  - Focus
+  - Tasks
+  - Notes
+  - "Project Updates"
+  - Decisions
+  - Review

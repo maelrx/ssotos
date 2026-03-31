@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	worktree = D:/Alter/SSOTOS/workspace/agent-brain
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = D:\\Alter\\SSOTOS\\workspace\\repos\\agent-brain.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
