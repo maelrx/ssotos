@@ -9,7 +9,7 @@
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 1 | Knowledge Filesystem Foundation | Establish canonical filesystem structure, schemas, templates, and daily notes | F1, F2, F3 | 6 |
-| 2 | Git / Exchange Boundary | Implement revision layer with Git, worktrees, diff, patch, and Exchange Zone | F4, F5 | 7 |
+| 2 | Git / Exchange Boundary | Implement revision layer with Git, worktrees, diff, patch, and Exchange Zone | F4, F5 | 11 |
 | 3 | Policy Engine | Build capability-based policy system with safe defaults | F6 | 5 |
 | 4 | Backend / API / Services / Jobs | Create FastAPI modular backend, Postgres schema, worker, audit | F7, F8, F13, F14, F15, F16 | 6 |
 | 5 | Agent Brain | Implement persistent agent memory and skills system | F9 | 7 |
@@ -20,7 +20,7 @@
 | 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |
 
 ---
-
+**
 ## Phase 1: Knowledge Filesystem Foundation
 
 **Goal:** Establish the canonical filesystem structure, schemas, templates, and daily notes — the sovereign foundation of the entire system.
@@ -60,6 +60,8 @@
 
 **Goal:** Implement the revision layer and Exchange Zone — the audit boundary that prevents silent mutations.
 
+**Status:** Plan 2/1 COMPLETE (2026-03-31)
+
 **Requirements:** F4-01, F4-02, F4-03, F4-04, F4-05, F4-06, F4-07, F5-01, F5-02, F5-03, F5-04, F5-05
 
 **Success Criteria:**
@@ -79,7 +81,15 @@
 - Git service with full worktree support
 - Proposal and branch lifecycle management
 - Patch pipeline with diff/view/apply
-- Exchange Zone UI
+- Exchange Zone API
+
+**Plan 1:**
+- 02-01-PLAN.md — NOT EXECUTED
+
+**Plan 2 (02-02-PLAN.md):**
+- Commits: 1605ad3, 7dd67d0, de9d1ad, 8191865, 98eee8a, 60e0305, b6a32a1, 74d4150, 2b3a748
+- Status: COMPLETE
+- Key files: src/services/git_service.py, src/services/proposal_service.py, src/services/patch_service.py, src/api/exchange.py
 
 ---
 
@@ -311,4 +321,5 @@ The build order is not arbitrary — each phase builds on the previous:
 ---
 
 *Roadmap created: 2026-03-31*
+*Phase 2 plan created: 2026-03-31*
 *Ready for execution: yes*
