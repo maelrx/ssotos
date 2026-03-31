@@ -1,6 +1,7 @@
 import { fetchApi } from './client';
 import type { Note, NoteCreateRequest, NoteUpdateRequest } from '../types/note';
 import type { Job, JobEvent } from '../types/job';
+import type { Proposal } from '../types/proposal';
 
 // Vault endpoints
 export const vaultApi = {
@@ -50,11 +51,11 @@ export const jobsApi = {
 // Exchange endpoints
 export const exchangeApi = {
   listProposals: (params?: { state?: string; target_domain?: string }) =>
-    fetchApi<{ proposals: any[]; total: number; states: Record<string, number> }>(
+    fetchApi<{ proposals: Proposal[]; total: number; states: Record<string, number> }>(
       `/exchange/proposals?${new URLSearchParams(params as any)}`
     ),
   getProposal: (id: string) =>
-    fetchApi(`/exchange/proposals/${id}`),
+    fetchApi<Proposal>(`/exchange/proposals/${id}`),
   approveProposal: (id: string, note?: string) =>
     fetchApi(`/exchange/proposals/${id}/approve`, { method: 'POST', body: JSON.stringify({ review_note: note }) }),
   rejectProposal: (id: string, reason: string) =>
