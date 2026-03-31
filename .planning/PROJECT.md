@@ -24,21 +24,20 @@ O produto resolve um problema estrutural: ferramentas atuais misturam camadas qu
 - ✓ Daily notes com templates selecionáveis — Phase 1
 - ✓ Git como ledger editorial (branches, worktrees, diff, patch, merge) — Phase 2
 - ✓ Exchange Zone com proposals, reviews e patch pipeline — Phase 2
+- ✓ Policy Engine com capability model (vault.*, agent.*, research.*, exchange.*) — Phase 3
+- ✓ Backend FastAPI modular (auth, vault, templates, gitops, exchange, policy, approvals, retrieval, agent, research, jobs, audit) — Phase 4
+- ✓ Postgres como banco operacional (12 tabelas: workspaces, actors, notes_projection, policy_rules, approvals, proposals, jobs, chunks, embeddings, artifacts, audit_logs) — Phase 4
+- ✓ Worker runtime para jobs assíncronos (8 job types) — Phase 4
+- ✓ Observabilidade e auditoria (structlog, audit logs, OpenTelemetry) — Phase 4
+- ✓ UI web (React + Vite + CodeMirror 6 + TanStack Query + Zustand) — Phase 4
+- ✓ Deployment self-hosted (Docker Compose + Caddy) — Phase 4
 
 ### Active
 
-- [ ] Policy Engine mínimo com capability model (vault.*, agent.*, research.*, exchange.*)
-- [ ] Policy Engine mínimo com capability model (vault.*, agent.*, research.*, exchange.*)
-- [ ] Backend FastAPI modular (módulos: auth, vault, templates, gitops, exchange, policy, approvals, retrieval, agent, research, jobs, audit)
-- [ ] Postgres como banco operacional (tabelas: workspaces, actors, notes_projection, policy_rules, approvals, proposals, jobs, chunks, embeddings, artifacts, audit_logs)
-- [ ] Worker runtime para jobs assíncronos
 - [ ] Agent Brain persistente em Markdown (SOUL.md, MEMORY.md, USER.md, skills/, heuristics/, reflections/)
 - [ ] Retrieval híbrido (FTS + pgvector + context packs)
 - [ ] Note Copilot (explicar, resumir, sugerir links/tags, propor patches)
 - [ ] Research Runtime v1 (blueprint → job → raw → synthesis → ingest proposal)
-- [ ] Observabilidade e auditoria (eventos, trace IDs, audit logs)
-- [ ] UI web (React + Vite + CodeMirror 6)
-- [ ] Deployment self-hosted (Docker Compose + Caddy)
 
 ### Out of Scope
 
@@ -111,4 +110,4 @@ A ordem não é negociável — cada fase constrói sobre a anterior.
 
 ---
 
-*Last updated: 2026-03-31 after Phase 1*
+*Last updated: 2026-03-31 after Phase 4*
