@@ -1,8 +1,8 @@
 """Policy evaluator — matches requests against rules using specificity-based priority."""
 import fnmatch
-from core.events import emit, EventType
-from core.policy.enums import CapabilityAction, CapabilityGroup, Domain
-from core.policy.models import PolicyOutcome, PolicyRequest, PolicyResult, PolicyRule
+from src.core.events import emit, EventType
+from src.core.policy.enums import CapabilityAction, CapabilityGroup, Domain
+from src.core.policy.models import PolicyOutcome, PolicyRequest, PolicyResult, PolicyRule
 
 
 # Priority scoring per D-40: most specific wins

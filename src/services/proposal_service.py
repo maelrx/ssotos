@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING
 import yaml
 import shutil
 
-from core.events import emit, EventType
-from core.policy.service import PolicyService, PolicyDeniedException
-from core.policy.models import PolicyRequest
-from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
+from src.core.events import emit, EventType
+from src.core.policy.service import PolicyService, PolicyDeniedException
+from src.core.policy.models import PolicyRequest
+from src.core.policy.enums import CapabilityGroup, CapabilityAction, Domain
 
 if TYPE_CHECKING:
-    from services.git_service import GitService
-    from services.patch_service import PatchService
-    from models.proposal import Proposal, ProposalState, ProposalType, SourceDomain
+    from src.services.git_service import GitService
+    from src.services.patch_service import PatchService
+    from src.models.proposal import Proposal, ProposalState, ProposalType, SourceDomain
 
 
 class InvalidStateTransition(Exception):

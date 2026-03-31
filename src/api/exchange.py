@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 import uuid
 
-from schemas.exchange import (
+from src.schemas.exchange import (
     CreateProposalRequest,
     ApproveProposalRequest,
     RejectProposalRequest,
@@ -16,10 +16,10 @@ from schemas.exchange import (
     ApplyPatchResponse,
     DiffInfo,
 )
-from services.git_service import GitService
-from services.patch_service import PatchService
-from services.proposal_service import ProposalService, InvalidStateTransition
-from models.proposal import ProposalState, ProposalType, SourceDomain
+from src.services.git_service import GitService
+from src.services.patch_service import PatchService
+from src.services.proposal_service import ProposalService, InvalidStateTransition
+from src.models.proposal import ProposalState, ProposalType, SourceDomain
 
 router = APIRouter(prefix="/exchange", tags=["exchange"])
 

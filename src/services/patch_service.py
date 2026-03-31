@@ -4,11 +4,11 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from core.events import emit, EventType
+from src.core.events import emit, EventType
 
 if TYPE_CHECKING:
-    from services.git_service import GitService
-    from models.proposal import Proposal
+    from src.services.git_service import GitService
+    from src.models.proposal import Proposal
 
 
 @dataclass

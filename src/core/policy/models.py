@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from core.policy.enums import CapabilityAction, CapabilityGroup, Domain
+from src.core.policy.enums import CapabilityAction, CapabilityGroup, Domain
 
 
 class SensitivityLevel(int, Enum):

@@ -3,11 +3,11 @@
 Per F6-04: All sensitive mutations call policy.check() before execution.
 All policy evaluations are logged via EventBus.
 """
-from core.events import emit, EventType
-from core.policy.enums import CapabilityAction, CapabilityGroup, Domain
-from core.policy.evaluator import PolicyEvaluator
-from core.policy.models import PolicyOutcome, PolicyRequest, PolicyResult, PolicyRule
-from core.policy.rules import PolicyRulesService
+from src.core.events import emit, EventType
+from src.core.policy.enums import CapabilityAction, CapabilityGroup, Domain
+from src.core.policy.evaluator import PolicyEvaluator
+from src.core.policy.models import PolicyOutcome, PolicyRequest, PolicyResult, PolicyRule
+from src.core.policy.rules import PolicyRulesService
 
 
 class PolicyDeniedException(Exception):

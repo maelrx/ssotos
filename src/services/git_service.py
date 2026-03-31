@@ -4,10 +4,10 @@ import shutil
 from pathlib import Path
 from typing import Literal
 
-from core.events import emit, EventType
-from core.policy.service import PolicyService, PolicyDeniedException
-from core.policy.models import PolicyRequest
-from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
+from src.core.events import emit, EventType
+from src.core.policy.service import PolicyService, PolicyDeniedException
+from src.core.policy.models import PolicyRequest
+from src.core.policy.enums import CapabilityGroup, CapabilityAction, Domain
 
 
 class GitError(Exception):

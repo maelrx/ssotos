@@ -1,8 +1,8 @@
 """Safe default policy rules per D-41 to D-44."""
 import uuid
 
-from core.policy.enums import CapabilityAction, CapabilityGroup, Domain
-from core.policy.models import PolicyOutcome, PolicyRule
+from src.core.policy.enums import CapabilityAction, CapabilityGroup, Domain
+from src.core.policy.models import PolicyOutcome, PolicyRule
 
 
 def _rule(

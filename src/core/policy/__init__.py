@@ -1,8 +1,8 @@
 """Policy engine — capability model and policy evaluator."""
-from core.policy.defaults import get_default_rules
-from core.policy.enums import CapabilityGroup, CapabilityAction, Domain
-from core.policy.evaluator import PolicyEvaluator
-from core.policy.models import (
+from src.core.policy.defaults import get_default_rules
+from src.core.policy.enums import CapabilityGroup, CapabilityAction, Domain
+from src.core.policy.evaluator import PolicyEvaluator
+from src.core.policy.models import (
     NoteType,
     PolicyOutcome,
     PolicyRequest,
@@ -10,7 +10,7 @@ from core.policy.models import (
     PolicyRule,
     SensitivityLevel,
 )
-from core.policy.rules import PolicyRulesService
+from src.core.policy.rules import PolicyRulesService
 
 __all__ = [
     "CapabilityGroup",

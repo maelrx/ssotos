@@ -3,8 +3,8 @@ from pathlib import Path
 
 import yaml
 
-from core.policy.defaults import get_default_rules
-from core.policy.models import PolicyRule
+from src.core.policy.defaults import get_default_rules
+from src.core.policy.models import PolicyRule
 
 # Default storage path under _system/ per Phase 1 structure
 _DEFAULT_STORAGE_PATH = Path("_system/policy/rules.yaml")
