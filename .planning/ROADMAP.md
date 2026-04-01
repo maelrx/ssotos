@@ -17,7 +17,7 @@
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | Complete |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | Complete |
 | 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | Complete |
-| 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |
+| 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | F15 | Planned |
 
 ---
 
@@ -427,6 +427,15 @@
 
 **Goal:** Expose MCP servers for vault, agent, research, retrieval — the standardized integration surface.
 
+**Requirements:** F15-01, F15-02, F15-03, F15-04, F15-05, F15-06
+
+**Status:** Planned (2026-04-01)
+
+**Plans:**
+- 10-01-PLAN.md — Wave 1: MCP infrastructure + vault-user-mcp + agent-brain-mcp — Pending
+- 10-02-PLAN.md — Wave 2: research-mcp + retrieval-mcp — Pending
+- 10-03-PLAN.md — Wave 3: Registration + tests + docs — Pending
+
 **Success Criteria:**
 1. `vault-user-mcp` server exposes note CRUD with policy enforcement
 2. `agent-brain-mcp` server exposes memory and skill operations
@@ -436,8 +445,8 @@
 6. No MCP path bypasses API/policy layer
 
 **Key Deliverables:**
-- MCP server implementations
-- Policy enforcement on MCP calls
+- MCP server implementations (FastMCP)
+- Policy enforcement on MCP calls (via AuditMiddleware)
 - MCP exposure documentation
 
 ---
