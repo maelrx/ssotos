@@ -14,7 +14,7 @@
 | 4 | Backend / API / Services / Jobs | 7/7 | Complete|  |
 | 5 | Agent Brain | 3/3 | Complete|  |
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
-| 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | 8 |
+| 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | Complete |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | 7 |
 | 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | 4 |
 | 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |

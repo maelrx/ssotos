@@ -62,10 +62,14 @@ CopilotPanel ──────────────► CopilotService
 | F11-10 | Error handling | Wave 1 |
 | F11-11 | Loading states | Wave 1 |
 
-## Next: Wave 2
+## Completed
 
-Wave 2 (07-02) covers: worker handlers for async operations, comprehensive tests (unit + integration), and any refinement of the implementation from wave 1 learnings.
+Phase 7 (Note Copilot) is fully complete (3 waves):
 
----
+| Wave | Commit | Content |
+|------|--------|---------|
+| Wave 1 | f528b3b | Full copilot (backend + frontend) |
+| Wave 2 | f2354a6 | Bug fixes + structlog + 9 unit tests |
+| Wave 3 | f1a184d | Async propose_patch via job queue + Playwright E2E |
 
-*Phase: 07-note-copilot | Wave: 1/3*
+**Next: Phase 8 — Research Runtime**
