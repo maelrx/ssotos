@@ -11,10 +11,12 @@ from src.schemas.copilot import (
     SuggestStructureResponse,
     ProposePatchRequest,
     ProposePatchResponse,
+    ProposePatchEnqueueResponse,
     ChatRequest,
     ChatResponse,
 )
 from src.services.copilot_service import CopilotService
+from src.services.job_service import JobService
 
 router = APIRouter(prefix="/copilot", tags=["copilot"])
 
@@ -69,20 +71,24 @@ async def suggest_structure(
     return await svc.suggest_structure(note_id, db)
 
 
-@router.post("/propose-patch/{note_id}", response_model=ProposePatchResponse)
+@router.post("/propose-patch/{note_id}", response_model=ProposePatchEnqueueResponse)
 async def propose_patch(
     note_id: UUID,
     body: ProposePatchRequest,
     db=Depends(get_db),
-) -> ProposePatchResponse:
-    """Generate patch proposal for a note (F11-07)."""
-    svc = CopilotService()
-    try:
-        return await svc.propose_patch(note_id, body.instruction, db)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to create proposal: {e}")
+) -> ProposePatchEnqueueResponse:
+    """Enqueue a patch proposal job for a note (F11-07).
+
+    The job runs asynchronously. Poll GET /jobs/{job_id} for status.
+    When completed, the result_data contains {proposal_id, diff, note_id}.
+    """
+    job_service = JobService(db)
+    job = await job_service.enqueue(
+        "propose_patch",
+        {"note_id": str(note_id), "instruction": body.instruction},
+        priority=5,
+    )
+    return ProposePatchEnqueueResponse(job_id=job.id, status="pending")
 
 
 @router.post("/chat/{note_id}", response_model=ChatResponse)

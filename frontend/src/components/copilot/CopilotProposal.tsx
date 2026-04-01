@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { copilotApi, ProposePatchResponse } from '../../api/copilot';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { copilotApi, ProposePatchResult } from '../../api/copilot';
+import { jobsApi } from '../../api/endpoints';
 import { FileDiff } from 'lucide-react';
 
 interface CopilotProposalProps {
@@ -9,16 +10,35 @@ interface CopilotProposalProps {
 
 export function CopilotProposal({ noteId }: CopilotProposalProps) {
   const [instruction, setInstruction] = useState('');
-  const [proposal, setProposal] = useState<ProposePatchResponse | null>(null);
+  const [proposalResult, setProposalResult] = useState<ProposePatchResult | null>(null);
 
   const patchMutation = useMutation({
     mutationFn: (instruction: string) => copilotApi.proposePatch(noteId, instruction),
-    onSuccess: (data) => setProposal(data),
   });
+
+  // Poll for job status when we have a job_id
+  const jobId = patchMutation.data?.job_id;
+
+  const jobQuery = useQuery({
+    queryKey: ['jobs', jobId],
+    queryFn: () => jobsApi.getJob(jobId!),
+    enabled: !!jobId && patchMutation.isSuccess,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === 'completed' || status === 'failed' ? false : 1000;
+    },
+  });
+
+  // When job completes, extract result_data and set proposal result
+  const jobStatus = jobQuery.data?.status;
+  if (jobStatus === 'completed' && jobQuery.data?.result_data && !proposalResult) {
+    const result = jobQuery.data.result_data as unknown as ProposePatchResult;
+    setProposalResult(result);
+  }
 
   return (
     <div className="p-4 space-y-4">
-      {!proposal ? (
+      {!proposalResult ? (
         <>
           {/* Instruction input */}
           <div className="space-y-2">
@@ -40,12 +60,24 @@ export function CopilotProposal({ noteId }: CopilotProposalProps) {
             className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 text-sm font-medium transition-colors"
           >
             <FileDiff className="w-4 h-4" />
-            {patchMutation.isPending ? 'Generating patch...' : 'Generate Patch'}
+            {patchMutation.isPending ? 'Enqueuing...' : jobQuery.isFetching ? 'Generating patch...' : 'Generate Patch'}
           </button>
 
           {patchMutation.isError && (
             <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">
-              Couldn't generate patch. Try again.
+              Couldn't enqueue patch job. Try again.
+            </div>
+          )}
+
+          {jobQuery.isError && (
+            <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">
+              Failed to check job status. Try again.
+            </div>
+          )}
+
+          {jobStatus === 'failed' && (
+            <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">
+              Job failed: {jobQuery.data?.error_message || 'Unknown error'}
             </div>
           )}
         </>
@@ -58,7 +90,7 @@ export function CopilotProposal({ noteId }: CopilotProposalProps) {
               Generated Diff
             </div>
             <pre className="bg-muted rounded p-3 text-xs overflow-auto max-h-64 font-mono whitespace-pre-wrap">
-              {proposal.diff}
+              {proposalResult.diff}
             </pre>
           </div>
 
@@ -68,7 +100,7 @@ export function CopilotProposal({ noteId }: CopilotProposalProps) {
               This patch proposal was submitted to the Exchange Zone for your review.
             </p>
             <button
-              onClick={() => setProposal(null)}
+              onClick={() => setProposalResult(null)}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded border hover:bg-muted text-sm transition-colors"
             >
               Done
@@ -77,7 +109,7 @@ export function CopilotProposal({ noteId }: CopilotProposalProps) {
 
           {/* Proposal ID */}
           <p className="text-xs text-muted-foreground text-center">
-            Proposal created: {proposal.proposal_id}
+            Proposal created: {proposalResult.proposal_id}
           </p>
         </>
       )}

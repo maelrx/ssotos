@@ -59,6 +59,12 @@ class ProposePatchResponse(BaseModel):
     proposal_id: UUID
     diff: str = Field(description="Unified diff")
 
+
+class ProposePatchEnqueueResponse(BaseModel):
+    """Response when a propose_patch job is enqueued."""
+    job_id: UUID
+    status: str = "pending"
+
 # Chat
 class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]

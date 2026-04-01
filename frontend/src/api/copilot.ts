@@ -47,6 +47,11 @@ export interface SuggestStructureResponse {
 }
 
 export interface ProposePatchResponse {
+  job_id: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+}
+
+export interface ProposePatchResult {
   note_id: string;
   proposal_id: string;
   diff: string;

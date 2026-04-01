@@ -7,6 +7,7 @@ from src.worker.handlers.parse_source import handle_parse_source
 from src.worker.handlers.apply_patch_bundle import handle_apply_patch_bundle
 from src.worker.handlers.reflect_agent import handle_reflect_agent
 from src.worker.handlers.consolidate_memory import handle_consolidate_memory
+from src.worker.handlers.propose_patch import handle_propose_patch
 
 HANDLERS = {
     "index_note": handle_index_note,
@@ -17,6 +18,7 @@ HANDLERS = {
     "apply_patch_bundle": handle_apply_patch_bundle,
     "reflect_agent": handle_reflect_agent,
     "consolidate_memory": handle_consolidate_memory,
+    "propose_patch": handle_propose_patch,
 }
 
 __all__ = ["HANDLERS"]
