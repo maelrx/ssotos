@@ -16,7 +16,7 @@
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | Complete |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | Complete |
-| 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | Planned |
+| 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | Complete |
 | 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |
 
 ---
@@ -387,12 +387,27 @@
 
 **Requirements:** F13-01, F13-02, F13-03, F13-04, F13-05, F13-06, F13-07, F13-08
 
-**Status:** Planned (2026-04-01)
+**Status:** COMPLETE (2026-04-01)
 
 **Plans:**
-- 09-01-PLAN.md — Wave 1: Retry with backoff + Checkpoint/Resume — Pending
-- 09-02-PLAN.md — Wave 2: Approval-aware execution — Pending
-- 09-03-PLAN.md — Wave 3: Idempotency + Tests — Pending
+- 09-01-PLAN.md — Wave 1: Retry with backoff + Checkpoint/Resume — COMPLETE
+- 09-02-PLAN.md — Wave 2: Approval-aware execution — COMPLETE
+- 09-03-PLAN.md — Wave 3: Idempotency + Tests — COMPLETE
+
+**Plan 09-01 Execution:**
+- Status: COMPLETE
+- Commit: d4ff5a5
+- Key files: src/worker/queue.py, src/worker/processor.py, src/worker/handlers/research_job.py, alembic/versions/003_add_job_retry_and_checkpoint.py
+
+**Plan 09-02 Execution:**
+- Status: COMPLETE
+- Commit: b255aec
+- Key files: src/services/approval_service.py, src/schemas/approval.py, src/worker/queue.py, alembic/versions/004_add_job_approval_fields.py
+
+**Plan 09-03 Execution:**
+- Status: COMPLETE
+- Commit: 4ff466c
+- Key files: src/api/jobs.py, tests/unit/test_job_queue.py, tests/unit/test_approval_service.py, alembic/versions/005_add_idempotency_key.py
 
 **Success Criteria:**
 1. Failed jobs retry with exponential backoff up to max_attempts
