@@ -76,6 +76,9 @@ async def create_job(
 
     Jobs are added to the queue for worker processing.
     The job starts in 'pending' status.
+
+    If an idempotency_key is provided and a job with the same key and job_type
+    already exists, returns the existing job with idempotent=True.
     """
     from src.db.models.workspace import Workspace
     from sqlalchemy import select
@@ -90,6 +93,31 @@ async def create_job(
         if workspace:
             workspace_id = workspace.id
 
+    # Check for existing job with same idempotency_key and job_type
+    if request.idempotency_key:
+        existing_stmt = select(Job).where(
+            Job.idempotency_key == request.idempotency_key,
+            Job.job_type == request.job_type,
+        )
+        existing_result = await db.execute(existing_stmt)
+        existing_job = existing_result.scalar_one_or_none()
+        if existing_job:
+            return JobResponse(
+                id=existing_job.id,
+                job_type=existing_job.job_type,
+                status=existing_job.status,
+                priority=existing_job.priority,
+                input_data=existing_job.input_data or {},
+                result_data=existing_job.result_data,
+                error_message=existing_job.error_message,
+                attempt_count=existing_job.attempt_count,
+                max_attempts=existing_job.max_attempts,
+                created_at=existing_job.created_at,
+                started_at=existing_job.started_at,
+                completed_at=existing_job.completed_at,
+                idempotent=True,
+            )
+
     job = Job(
         job_type=request.job_type,
         priority=request.priority,
@@ -98,6 +126,7 @@ async def create_job(
         status="pending",
         attempt_count=0,
         max_attempts=3,
+        idempotency_key=request.idempotency_key,
     )
     db.add(job)
     await db.flush()
@@ -111,7 +140,21 @@ async def create_job(
     )
     db.add(event)
 
-    return _job_to_response(job)
+    return JobResponse(
+        id=job.id,
+        job_type=job.job_type,
+        status=job.status,
+        priority=job.priority,
+        input_data=job.input_data or {},
+        result_data=job.result_data,
+        error_message=job.error_message,
+        attempt_count=job.attempt_count,
+        max_attempts=job.max_attempts,
+        created_at=job.created_at,
+        started_at=job.started_at,
+        completed_at=job.completed_at,
+        idempotent=False,
+    )
 
 
 @router.get("/{job_id}", response_model=JobResponse)

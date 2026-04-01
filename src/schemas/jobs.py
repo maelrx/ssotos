@@ -28,6 +28,7 @@ class JobStatus(str):
 class JobCreateRequest(BaseModel):
     """Request to create a job."""
     job_type: str
+    idempotency_key: str | None = Field(default=None, description="Optional client-provided dedup key")
     priority: int = Field(default=0)
     input_data: dict = Field(default_factory=dict)
     workspace_id: UUID | None = None
@@ -48,6 +49,7 @@ class JobResponse(BaseModel):
     created_at: datetime
     started_at: datetime | None
     completed_at: datetime | None
+    idempotent: bool = False
 
 
 class JobEventResponse(BaseModel):
