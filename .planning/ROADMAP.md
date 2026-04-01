@@ -15,8 +15,8 @@
 | 5 | Agent Brain | 3/3 | Complete|  |
 | 6 | Retrieval | Build hybrid search (FTS + vector) with context packs | F10 | 6 |
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | Complete |
-| 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | 7 |
-| 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | 4 |
+| 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | Complete |
+| 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | Planned |
 | 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | — | 4 |
 
 ---
@@ -343,7 +343,23 @@
 
 **Goal:** Implement the research job pipeline — turning ephemeral chat into durable, traceable knowledge production.
 
-**Requirements:** F12-01, F12-02, F12-03, F12-04, F12-05, F12-06, F12-07
+**Requirements:** F12-01, F12-02, F12-03, F12-04, F12-05, F12-06, F12-07, F12-08, F12-09, F12-10
+
+**Status:** COMPLETE (2026-04-01)
+
+**Plans:**
+- 08-01-PLAN.md — Wave 1: Research pipeline core (Crawl4AI, Docling, Synthesis, IngestProposal) — COMPLETE
+- 08-02-PLAN.md — Wave 2: Research workspace UI — COMPLETE
+
+**Plan 08-01 Execution:**
+- Status: COMPLETE
+- Commit: b174bb4
+- Key files: src/services/crawl_service.py, src/services/docling_service.py, src/services/synthesis_service.py, src/services/ingest_proposal_service.py, src/schemas/research.py, src/worker/handlers/research_job.py, src/api/research.py, pyproject.toml
+
+**Plan 08-02 Execution:**
+- Status: COMPLETE
+- Commit: eedf819
+- Key files: frontend/src/api/research.ts, frontend/src/components/research/ResearchWorkspace.tsx, frontend/src/components/research/JobList.tsx, frontend/src/components/research/SourceList.tsx, frontend/src/components/research/SynthesisViewer.tsx
 
 **Success Criteria:**
 1. User can create research brief with goal, questions, scope, depth, max_sources
@@ -369,7 +385,14 @@
 
 **Goal:** Add retries, checkpoint/resume, approval-aware execution — making the system robust for real workloads.
 
-**Requirements:** F13-01, F13-02, F13-03, F13-04 (refinements)
+**Requirements:** F13-01, F13-02, F13-03, F13-04, F13-05, F13-06, F13-07, F13-08
+
+**Status:** Planned (2026-04-01)
+
+**Plans:**
+- 09-01-PLAN.md — Wave 1: Retry with backoff + Checkpoint/Resume — Pending
+- 09-02-PLAN.md — Wave 2: Approval-aware execution — Pending
+- 09-03-PLAN.md — Wave 3: Idempotency + Tests — Pending
 
 **Success Criteria:**
 1. Failed jobs retry with exponential backoff up to max_attempts
