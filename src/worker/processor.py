@@ -10,6 +10,13 @@ from src.core.otel import create_span, get_current_trace_id
 logger = structlog.get_logger(__name__)
 
 
+async def _make_record_checkpoint(db, job, queue):
+    """Create a record_checkpoint callable for the handler."""
+    async def record_checkpoint(job_id: str, checkpoint_id: str, checkpoint_data: dict[str, Any]) -> None:
+        await queue.record_checkpoint(db, job, checkpoint_id, checkpoint_data)
+    return record_checkpoint
+
+
 class JobProcessor:
     """Processes jobs from the queue by dispatching to handlers."""
 
@@ -54,8 +61,29 @@ class JobProcessor:
                         "trace_id": trace_id or "",
                     }
                 ) as span:
-                    # Call the handler
-                    result = await handler(job.input_data)
+                    # Package context for handler
+                    context = {
+                        "job_id": str(job.id),
+                        "workspace_id": str(job.workspace_id),
+                        "trace_id": trace_id,
+                        "attempt": job.attempt_count,
+                    }
+
+                    # Add record_checkpoint function for handlers
+                    context["record_checkpoint"] = await _make_record_checkpoint(db, job, self.queue)
+
+                    # If resuming from checkpoint, add checkpoint data
+                    if job.last_checkpoint:
+                        checkpoint_data = self.queue.get_checkpoint_data(job, job.last_checkpoint)
+                        context["resume_from_checkpoint"] = job.last_checkpoint
+                        context["checkpoint_data"] = checkpoint_data
+
+                    # Call the handler with backward compatibility
+                    try:
+                        result = await handler(job.input_data, context)
+                    except TypeError:
+                        # Handler doesn't accept context — call without
+                        result = await handler(job.input_data)
                     span.set_attribute("job.result", "success")
 
                 await self.queue.complete(db, job, result)

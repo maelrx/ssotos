@@ -4,7 +4,7 @@ Uses SELECT FOR UPDATE SKIP LOCKED to atomically claim jobs.
 Multiple workers can run simultaneously without conflicts.
 """
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID, uuid4
 import structlog
@@ -41,11 +41,14 @@ class JobQueue:
         Uses SELECT FOR UPDATE SKIP LOCKED to ensure atomic claim.
         Returns None if no jobs available.
         """
-        # Build query for available jobs
+        now = datetime.utcnow()
+
+        # Build query for available jobs (skip jobs with next_retry_at in future)
         query = (
             select(Job)
             .where(Job.status == "pending")
             .where(Job.claimed_by.is_(None))
+            .where((Job.next_retry_at.is_(None)) | (Job.next_retry_at <= now))
             .order_by(Job.priority.desc(), Job.created_at)
             .with_for_update(skip_locked=True)
             .limit(1)
@@ -121,7 +124,7 @@ class JobQueue:
         logger.info("job_completed", job_id=str(job.id), job_type=job.job_type)
 
     async def fail(self, db: AsyncSession, job: Job, error: str) -> None:
-        """Mark job as failed. Handles retry logic."""
+        """Mark job as failed. Handles retry logic with exponential backoff."""
         now = datetime.utcnow()
         job.attempt_count += 1
         job.error_message = error
@@ -130,16 +133,23 @@ class JobQueue:
             # Max retries reached — mark as permanently failed
             job.status = "failed"
             job.completed_at = now
+            job.next_retry_at = None
             event_type = "failed"
             message = f"Job failed after {job.attempt_count} attempts: {error}"
         else:
-            # Reset for retry with exponential backoff
+            # Exponential backoff: base=30s, multiplier=2, cap=3600s
+            base_delay = 30
+            max_delay = 3600
+            delay = min(base_delay * (2 ** (job.attempt_count - 1)), max_delay)
+            job.next_retry_at = now + timedelta(seconds=delay)
+
+            # Reset for retry
             job.status = "pending"
             job.claimed_by = None
             job.claimed_at = None
             job.started_at = None
             event_type = "retried"
-            message = f"Job will retry (attempt {job.attempt_count + 1}/{job.max_attempts})"
+            message = f"Job will retry (attempt {job.attempt_count}/{job.max_attempts}) in {delay}s"
 
         event = JobEvent(
             id=uuid4(),
@@ -181,3 +191,66 @@ class JobQueue:
             "progress": progress,
             "message": message,
         }, workspace_id=str(job.workspace_id) if job.workspace_id else None)
+
+    async def record_checkpoint(
+        self,
+        db: AsyncSession,
+        job: Job,
+        checkpoint_id: str,
+        checkpoint_data: dict[str, Any],
+    ) -> None:
+        """Record a named checkpoint for a running job.
+
+        Stores intermediate progress so job can resume from this point
+        if interrupted. Checkpoint data is merged into result_data
+        under a 'checkpoints' key.
+
+        Args:
+            checkpoint_id: Unique identifier for this checkpoint (e.g., 'stage-3-crawl')
+            checkpoint_data: Arbitrary dict with intermediate state
+        """
+        now = datetime.utcnow()
+
+        # Initialize checkpoints structure
+        if job.result_data is None:
+            job.result_data = {}
+
+        if "checkpoints" not in job.result_data:
+            job.result_data["checkpoints"] = {}
+
+        # Store checkpoint with timestamp
+        job.result_data["checkpoints"][checkpoint_id] = {
+            "data": checkpoint_data,
+            "recorded_at": now.isoformat(),
+            "attempt": job.attempt_count,
+        }
+        job.last_checkpoint = checkpoint_id
+
+        event = JobEvent(
+            id=uuid4(),
+            job_id=job.id,
+            event_type="checkpoint",
+            message=f"Checkpoint recorded: {checkpoint_id}",
+            extra={"checkpoint_id": checkpoint_id, "attempt": job.attempt_count},
+            trace_id=job.trace_id,
+        )
+        db.add(event)
+        await db.commit()
+
+        broadcast_job_event({
+            "event_type": "job_checkpoint",
+            "job_id": str(job.id),
+            "checkpoint_id": checkpoint_id,
+        }, workspace_id=str(job.workspace_id) if job.workspace_id else None)
+
+        logger.debug("checkpoint_recorded", job_id=str(job.id), checkpoint_id=checkpoint_id)
+
+    def get_checkpoint_data(self, job: Job, checkpoint_id: str) -> dict[str, Any] | None:
+        """Extract checkpoint data from job result_data."""
+        if job.result_data is None:
+            return None
+        checkpoints = job.result_data.get("checkpoints", {})
+        checkpoint = checkpoints.get(checkpoint_id)
+        if checkpoint:
+            return checkpoint.get("data")
+        return None
