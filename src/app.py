@@ -9,6 +9,10 @@ from src.middleware.audit import AuditMiddleware
 from src.db.database import engine
 from src.core.logging import configure_logging
 from src.core.otel import configure_otel
+from src.mcp.vault_server import vault_mcp
+from src.mcp.agent_server import agent_mcp
+from src.mcp.research_server import research_mcp
+from src.mcp.retrieval_server import retrieval_mcp
 
 # Configure logging and OTel at startup
 configure_logging()
@@ -73,6 +77,12 @@ def create_app() -> FastAPI:
     app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
     app.include_router(audit.router, prefix="/api/admin", tags=["admin"])
     app.include_router(agent.router, prefix="/api", tags=["agent"])
+
+    # Mount MCP servers (per Phase 10)
+    app.mount("/mcp/vault", vault_mcp.streamable_http_app())
+    app.mount("/mcp/agent", agent_mcp.streamable_http_app())
+    app.mount("/mcp/research", research_mcp.streamable_http_app())
+    app.mount("/mcp/retrieval", retrieval_mcp.streamable_http_app())
 
     return app
 
