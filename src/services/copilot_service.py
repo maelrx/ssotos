@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from uuid import UUID, uuid4
 from typing import Any
 
+from src.core.logging import get_logger
+log = get_logger(__name__)
+
 from src.schemas.copilot import (
     NoteExplanationResponse,
     NoteSummaryResponse,
@@ -44,6 +47,18 @@ class CopilotService:
     ) -> None:
         pass
 
+    async def _get_workspace_id(self, note_id: UUID, db: Any) -> UUID:
+        """Look up the workspace_id for a given note_id."""
+        from sqlalchemy import select
+        from src.db.models.note_projection import NoteProjection
+        result = await db.execute(
+            select(NoteProjection.workspace_id).where(NoteProjection.id == note_id)
+        )
+        row = result.scalar_one_or_none()
+        if row is None:
+            raise ValueError(f"NoteProjection not found for note_id={note_id}")
+        return row
+
     async def explain(self, note_id: UUID, db: Any) -> NoteExplanationResponse:
         """Generate explanation of a note using context pack.
 
@@ -52,6 +67,7 @@ class CopilotService:
         3. Call PydanticAI agent with explain instruction
         4. Return structured response
         """
+        log.info("copilot.explain", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -61,9 +77,10 @@ class CopilotService:
             context = await retrieval.build_context_pack(note_id, db)
         except ValueError:
             # If chunk not found, try hybrid search to get related content
+            log.warning("copilot.build_context_pack_failed", note_id=str(note_id), fallback="hybrid_search")
             results = await retrieval.hybrid_search(
                 query=f"note content for {note_id}",
-                workspace_id=note_id,
+                workspace_id=await self._get_workspace_id(note_id, db),
                 query_vector=[],
                 limit=5,
                 mode="fts",
@@ -98,6 +115,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
 
     async def summarize(self, note_id: UUID, db: Any) -> NoteSummaryResponse:
         """Generate concise summary of a note."""
+        log.info("copilot.summarize", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -106,9 +124,10 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
             context = await retrieval.build_context_pack(note_id, db)
             content = context.snippet if context else ""
         except ValueError:
+            log.warning("copilot.build_context_pack_failed", note_id=str(note_id), fallback="hybrid_search")
             results = await retrieval.hybrid_search(
                 query=f"note content for {note_id}",
-                workspace_id=note_id,
+                workspace_id=await self._get_workspace_id(note_id, db),
                 query_vector=[],
                 limit=3,
                 mode="fts",
@@ -134,6 +153,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
         2. Use RetrievalService.hybrid_search to find related notes
         3. Return top 5 suggestions with reasons
         """
+        log.info("copilot.suggest_links", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -147,7 +167,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
         # Search for related content
         results = await retrieval.hybrid_search(
             query=query_text,
-            workspace_id=note_id,
+            workspace_id=await self._get_workspace_id(note_id, db),
             query_vector=[],
             limit=5,
             mode="fts",
@@ -165,6 +185,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
 
     async def suggest_tags(self, note_id: UUID, db: Any) -> SuggestTagsResponse:
         """Suggest tags based on note content analysis."""
+        log.info("copilot.suggest_tags", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -173,9 +194,10 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
             context = await retrieval.build_context_pack(note_id, db)
             content = context.snippet if context else ""
         except ValueError:
+            log.warning("copilot.build_context_pack_failed", note_id=str(note_id), fallback="hybrid_search")
             results = await retrieval.hybrid_search(
                 query=f"note content for {note_id}",
-                workspace_id=note_id,
+                workspace_id=await self._get_workspace_id(note_id, db),
                 query_vector=[],
                 limit=1,
                 mode="fts",
@@ -196,6 +218,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
 
     async def suggest_structure(self, note_id: UUID, db: Any) -> SuggestStructureResponse:
         """Analyze note structure for improvement opportunities."""
+        log.info("copilot.suggest_structure", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -204,9 +227,10 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
             context = await retrieval.build_context_pack(note_id, db)
             content = context.snippet if context else ""
         except ValueError:
+            log.warning("copilot.build_context_pack_failed", note_id=str(note_id), fallback="hybrid_search")
             results = await retrieval.hybrid_search(
                 query=f"note content for {note_id}",
-                workspace_id=note_id,
+                workspace_id=await self._get_workspace_id(note_id, db),
                 query_vector=[],
                 limit=1,
                 mode="fts",
@@ -255,7 +279,11 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
         2. Generate patch via PydanticAI (for v1: basic diff)
         3. Create ProposalService entry
         4. Return proposal_id and diff
+
+        Raises:
+            ValueError: If note_id is not found in the database.
         """
+        log.info("copilot.propose_patch", note_id=str(note_id), instruction=instruction)
         from src.services.retrieval_service import RetrievalService
         from src.services.proposal_service import ProposalService
         from src.services.patch_service import PatchService
@@ -291,16 +319,17 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
 
             proposal = proposal_svc.create_proposal(
                 proposal_id=proposal_id,
-                proposal_type=ProposalType.PATCH,
+                proposal_type=ProposalType.NOTE_EDIT,
                 source_domain=SourceDomain.AGENT_BRAIN,
                 target_domain=SourceDomain.USER_VAULT,
                 actor="copilot",
                 target_path=note_path,
                 initial_content=diff,
             )
-        except Exception:
-            # If Exchange Zone not initialized, return diff without proposal
-            proposal_id = str(uuid4())
+        except Exception as e:
+            log.error("copilot.proposal_create_failed", note_id=str(note_id), error=str(e))
+            # Re-raise so the API can return an error to the user
+            raise
 
         return ProposePatchResponse(
             note_id=note_id,
@@ -319,6 +348,7 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
 
         Each message pair is independent.
         """
+        log.info("copilot.chat", note_id=str(note_id))
         from src.services.retrieval_service import RetrievalService
 
         retrieval = RetrievalService(db)
@@ -327,9 +357,10 @@ Output format: Return ONLY the explanation as markdown. Be concise and accurate.
             context = await retrieval.build_context_pack(note_id, db)
             snippet = context.snippet if context else ""
         except ValueError:
+            log.warning("copilot.build_context_pack_failed", note_id=str(note_id), fallback="hybrid_search")
             results = await retrieval.hybrid_search(
                 query=f"note content for {note_id}",
-                workspace_id=note_id,
+                workspace_id=await self._get_workspace_id(note_id, db),
                 query_vector=[],
                 limit=3,
                 mode="fts",

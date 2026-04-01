@@ -1,5 +1,5 @@
 """Copilot REST API — per F11-01 through F11-11."""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from uuid import UUID
 
 from src.db.database import get_db
@@ -77,7 +77,12 @@ async def propose_patch(
 ) -> ProposePatchResponse:
     """Generate patch proposal for a note (F11-07)."""
     svc = CopilotService()
-    return await svc.propose_patch(note_id, body.instruction, db)
+    try:
+        return await svc.propose_patch(note_id, body.instruction, db)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create proposal: {e}")
 
 
 @router.post("/chat/{note_id}", response_model=ChatResponse)
