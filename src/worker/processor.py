@@ -17,6 +17,16 @@ async def _make_record_checkpoint(db, job, queue):
     return record_checkpoint
 
 
+async def _make_pause_for_approval(db, job, queue):
+    """Create a pause_for_approval callable for the handler."""
+    async def pause_for_approval(reason: str | None = None) -> str:
+        from uuid import uuid4
+        approval_id = str(uuid4())
+        await queue.pause_for_approval(db, job, approval_id)
+        return approval_id
+    return pause_for_approval
+
+
 class JobProcessor:
     """Processes jobs from the queue by dispatching to handlers."""
 
@@ -71,6 +81,9 @@ class JobProcessor:
 
                     # Add record_checkpoint function for handlers
                     context["record_checkpoint"] = await _make_record_checkpoint(db, job, self.queue)
+
+                    # Add pause_for_approval function for handlers
+                    context["pause_for_approval"] = await _make_pause_for_approval(db, job, self.queue)
 
                     # If resuming from checkpoint, add checkpoint data
                     if job.last_checkpoint:

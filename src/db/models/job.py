@@ -1,7 +1,8 @@
 """Job model — D-51, F13-01, F13-02."""
 import uuid
 from datetime import datetime
-from sqlalchemy import String, DateTime, Integer, JSON, ForeignKey, Index
+from sqlalchemy import String, DateTime, Integer, JSON, ForeignKey, Index, Boolean
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from src.db.database import Base
 
@@ -28,6 +29,8 @@ class Job(Base):
     trace_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     next_retry_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     last_checkpoint: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    approval_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    approval_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

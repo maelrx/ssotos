@@ -40,15 +40,18 @@ class JobQueue:
 
         Uses SELECT FOR UPDATE SKIP LOCKED to ensure atomic claim.
         Returns None if no jobs available.
+        Skips jobs that are paused for approval.
         """
         now = datetime.utcnow()
 
         # Build query for available jobs (skip jobs with next_retry_at in future)
+        # Skip jobs that are paused for approval (approval_required=True means awaiting)
         query = (
             select(Job)
             .where(Job.status == "pending")
             .where(Job.claimed_by.is_(None))
             .where((Job.next_retry_at.is_(None)) | (Job.next_retry_at <= now))
+            .where(~((Job.approval_required == True) & (Job.approval_id.isnot(None))))
             .order_by(Job.priority.desc(), Job.created_at)
             .with_for_update(skip_locked=True)
             .limit(1)
@@ -254,3 +257,43 @@ class JobQueue:
         if checkpoint:
             return checkpoint.get("data")
         return None
+
+    async def pause_for_approval(
+        self,
+        db: AsyncSession,
+        job: Job,
+        approval_id: str,
+    ) -> None:
+        """Pause a running job to wait for human approval.
+
+        Transitions job to awaiting_approval status and records an event.
+        The job will not be claimed by workers until approved or rejected.
+        """
+        now = datetime.utcnow()
+        job.status = "awaiting_approval"
+        job.approval_required = True
+        job.approval_id = UUID(approval_id)
+
+        event = JobEvent(
+            id=uuid4(),
+            job_id=job.id,
+            event_type="awaiting_approval",
+            message=f"Job paused for approval: {approval_id}",
+            extra={"approval_id": approval_id},
+            trace_id=job.trace_id,
+        )
+        db.add(event)
+        await db.commit()
+
+        broadcast_job_event({
+            "event_type": "job_awaiting_approval",
+            "job_id": str(job.id),
+            "approval_id": approval_id,
+            "timestamp": now.isoformat(),
+        }, workspace_id=str(job.workspace_id) if job.workspace_id else None)
+
+        logger.info(
+            "job_paused_for_approval",
+            job_id=str(job.id),
+            approval_id=approval_id,
+        )

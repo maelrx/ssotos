@@ -217,7 +217,7 @@ async def handle_research_job(
             synthesis_path = checkpoint_data.get("synthesis_path") if checkpoint_data else None
             logger.info("research_stage_skipped", stage="synthesizing", job_id=job_id)
 
-        # ─── Stage 6: Ingest proposal (90%) ───
+        # ─── Stage 6: Ingest proposal + Approval (90%) ───
         if resume_from != "stage-6-ingest":
             state = "awaiting_approval"
             logger.info("research_stage", stage=state, job_id=job_id)
@@ -238,12 +238,33 @@ async def handle_research_job(
                 logger.warning("ingest_proposal_failed", job_id=job_id, error=str(e))
                 # Non-fatal: synthesis is still available
 
-            # Record checkpoint after ingest stage
+            # Record checkpoint before pausing for approval
             if context and "record_checkpoint" in context:
                 await context["record_checkpoint"](job_id, "stage-6-ingest", {
                     "state": "awaiting_approval",
                 })
 
+            # Pause for approval — job will not complete until user approves
+            approval_id = None
+            if context and "pause_for_approval" in context:
+                approval_id = await context["pause_for_approval"](
+                    reason=f"Research job awaiting approval to ingest findings for: {research_query}"
+                )
+
+            return {
+                "job_id": job_id,
+                "workspace_id": str(workspace_id),
+                "research_query": research_query,
+                "state": state,
+                "approval_id": approval_id,
+                "sources": source_results,
+                "blueprint_path": blueprint_path,
+                "synthesis_path": synthesis_path,
+                "sources_crawled": sum(1 for s in source_results if s.get("status") == "crawled"),
+                "sources_failed": sum(1 for s in source_results if s.get("status") == "failed"),
+            }
+
+        # If resuming after approval, complete the job
         state = "completed"
         logger.info("research_job_complete", job_id=job_id, sources=len(source_results))
 
