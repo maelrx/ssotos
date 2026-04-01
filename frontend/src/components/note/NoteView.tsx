@@ -1,6 +1,8 @@
 import ReactMarkdown from 'react-markdown';
+import { Sparkles } from 'lucide-react';
 import { useNote } from '../../hooks/useNotes';
 import { MetadataPanel } from './MetadataPanel';
+import { CopilotPanel } from '../copilot/CopilotPanel';
 import { useUIStore } from '../../stores/uiStore';
 
 interface NoteViewProps {
@@ -9,7 +11,7 @@ interface NoteViewProps {
 
 export function NoteView({ noteId }: NoteViewProps) {
   const { data: note, isLoading } = useNote(noteId);
-  const { setEditorMode } = useUIStore();
+  const { setEditorMode, copilotPanelOpen, toggleCopilotPanel } = useUIStore();
 
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
@@ -25,12 +27,21 @@ export function NoteView({ noteId }: NoteViewProps) {
         <div className="max-w-3xl mx-auto">
           <div className="flex items-start justify-between mb-6">
             <h1 className="text-2xl font-bold">{note.title || note.path.split('/').pop()}</h1>
-            <button
-              onClick={() => setEditorMode('edit')}
-              className="px-3 py-1.5 text-sm rounded border hover:bg-muted"
-            >
-              Edit
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleCopilotPanel}
+                title="Open Copilot"
+                className="p-2 hover:bg-muted rounded"
+              >
+                <Sparkles className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setEditorMode('edit')}
+                className="px-3 py-1.5 text-sm rounded border hover:bg-muted"
+              >
+                Edit
+              </button>
+            </div>
           </div>
           <article className="prose prose-slate max-w-none">
             <ReactMarkdown>{note.content}</ReactMarkdown>
@@ -38,6 +49,7 @@ export function NoteView({ noteId }: NoteViewProps) {
         </div>
       </div>
       <MetadataPanel note={note} />
+      {copilotPanelOpen && <CopilotPanel noteId={noteId} />}
     </div>
   );
 }

@@ -20,6 +20,12 @@ interface UIState {
   // Jobs indicator
   activeJobCount: number;
   setActiveJobCount: (count: number) => void;
+
+  // Copilot panel
+  copilotPanelOpen: boolean;
+  copilotActiveTab: 'chat' | 'suggestions' | 'proposal';
+  toggleCopilotPanel: () => void;
+  setCopilotActiveTab: (tab: UIState['copilotActiveTab']) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -37,4 +43,9 @@ export const useUIStore = create<UIState>((set) => ({
 
   activeJobCount: 0,
   setActiveJobCount: (count) => set({ activeJobCount: count }),
+
+  copilotPanelOpen: false,
+  copilotActiveTab: 'suggestions',
+  toggleCopilotPanel: () => set((s) => ({ copilotPanelOpen: !s.copilotPanelOpen })),
+  setCopilotActiveTab: (tab) => set({ copilotActiveTab: tab }),
 }));
