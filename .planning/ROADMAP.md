@@ -17,7 +17,7 @@
 | 7 | Note Copilot | Create per-note AI assistance with patch proposals | F11 | Complete |
 | 8 | Research Runtime | Implement research job pipeline with crawl/parse/synth | F12 | Complete |
 | 9 | Durability / HITL | Add retries, checkpoint/resume, approval-aware execution | F13 | Complete |
-| 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | F15 | Planned |
+| 10 | MCP / Integrations | Expose MCP servers for vault, agent, research, retrieval | F15 | Complete |
 
 ---
 
@@ -429,12 +429,27 @@
 
 **Requirements:** F15-01, F15-02, F15-03, F15-04, F15-05, F15-06
 
-**Status:** Planned (2026-04-01)
+**Status:** COMPLETE (2026-04-01)
 
 **Plans:**
-- 10-01-PLAN.md — Wave 1: MCP infrastructure + vault-user-mcp + agent-brain-mcp — Pending
-- 10-02-PLAN.md — Wave 2: research-mcp + retrieval-mcp — Pending
-- 10-03-PLAN.md — Wave 3: Registration + tests + docs — Pending
+- 10-01-PLAN.md — Wave 1: MCP infrastructure + vault-user-mcp + agent-brain-mcp — COMPLETE
+- 10-02-PLAN.md — Wave 2: research-mcp + retrieval-mcp — COMPLETE
+- 10-03-PLAN.md — Wave 3: Registration + tests + docs — COMPLETE
+
+**Plan 10-01 Execution:**
+- Status: COMPLETE
+- Commit: 1dedae0
+- Key files: src/mcp/base.py, src/mcp/vault_server.py, src/mcp/agent_server.py, pyproject.toml
+
+**Plan 10-02 Execution:**
+- Status: COMPLETE
+- Commit: fbdb822
+- Key files: src/mcp/research_server.py, src/mcp/retrieval_server.py
+
+**Plan 10-03 Execution:**
+- Status: COMPLETE
+- Commit: 7131318
+- Key files: src/app.py (MCP mounts), tests/unit/test_mcp_servers.py, docs/MCP_INTEGRATION.md
 
 **Success Criteria:**
 1. `vault-user-mcp` server exposes note CRUD with policy enforcement
