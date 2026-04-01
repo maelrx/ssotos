@@ -10,6 +10,7 @@ from src.db.session import get_db
 from src.db.models.job import Job
 from src.db.models.artifact import Artifact
 from src.db.models.workspace import Workspace
+from src.schemas.research import ResearchBriefRequest
 
 router = APIRouter(prefix="/research", tags=["research"])
 
@@ -143,13 +144,90 @@ async def list_artifacts(
             {
                 "id": str(a.id),
                 "artifact_type": a.artifact_type,
-                "name": a.name,
-                "path": a.path,
-                "mime_type": a.mime_type,
-                "size_bytes": a.size_bytes,
+                "file_path": a.file_path,
+                "source_url": a.source_url,
+                "content_hash": a.content_hash,
                 "created_at": a.created_at.isoformat(),
             }
             for a in artifacts
         ],
         "total": len(artifacts),
     }
+
+
+@router.post("/briefs")
+async def create_research_brief(
+    request: ResearchBriefRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a research brief and enqueue a research job.
+
+    This is the same as POST /jobs but with extended input for research briefs.
+    """
+    workspace_id = request.workspace_id
+    if not workspace_id:
+        ws_stmt = select(Workspace).limit(1)
+        ws_result = await db.execute(ws_stmt)
+        workspace = ws_result.scalar_one_or_none()
+        if workspace:
+            workspace_id = workspace.id
+
+    job = Job(
+        job_type="research_job",
+        priority=50,
+        input_data={
+            "query": request.query,
+            "sources": [],
+            "goal": request.goal,
+            "questions": request.questions,
+            "scope": request.scope,
+            "depth": request.depth,
+            "max_sources": request.max_sources,
+        },
+        workspace_id=workspace_id or UUID("00000000-0000-0000-0000-000000000000"),
+        status="pending",
+    )
+    db.add(job)
+    await db.flush()
+
+    return {"job_id": str(job.id), "message": "Research job enqueued"}
+
+
+@router.post("/jobs/{job_id}/cancel")
+async def cancel_research_job(
+    job_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """Cancel a running research job."""
+    stmt = select(Job).where(Job.id == job_id, Job.job_type == "research_job")
+    result = await db.execute(stmt)
+    job = result.scalar_one_or_none()
+
+    if not job:
+        raise HTTPException(status_code=404, detail="Research job not found")
+
+    if job.status not in ("pending", "running"):
+        raise HTTPException(status_code=400, detail=f"Cannot cancel job with status: {job.status}")
+
+    job.status = "failed"
+    job.error_message = "Cancelled by user"
+    await db.commit()
+
+    return {"success": True, "message": "Job cancelled"}
+
+
+@router.get("/jobs/{job_id}/sources")
+async def get_research_sources(
+    job_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """Get sources for a research job from result_data."""
+    stmt = select(Job).where(Job.id == job_id, Job.job_type == "research_job")
+    result = await db.execute(stmt)
+    job = result.scalar_one_or_none()
+
+    if not job:
+        raise HTTPException(status_code=404, detail="Research job not found")
+
+    sources = job.result_data.get("sources", []) if job.result_data else []
+    return {"job_id": str(job_id), "sources": sources}
